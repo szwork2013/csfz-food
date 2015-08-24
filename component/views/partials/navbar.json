@@ -1,0 +1,17 @@
+[
+  {
+    "channel": "index",
+    "text": "首页",
+    "to": "index"
+  },
+  {
+    "channel": "store",
+    "text": "店铺",
+    "to": "store"
+  },
+  {
+    "channel": "manage",
+    "text": "管理",
+    "to": "manage-store"
+  }
+]
