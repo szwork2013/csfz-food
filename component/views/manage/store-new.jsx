@@ -11,7 +11,7 @@ var Sidebar = require('./sidebar.jsx');
 var StoreNew = React.createClass({
     componentDidMount: function () {
         backend.get.manageStoreNew().then(function (response) {
-            this.props.update(response);
+            ee.emit('update', response);
         }.bind(this));
     },
     render: function () {
@@ -179,7 +179,8 @@ var Upload = React.createClass({
                 <label className="col-lg-2 control-label">店铺图片</label>
 
                 <div className="col-lg-10">
-                    <Dropzone onDrop={this.onDrop} multiple={false} style={{width:152,height:152,border:'1px solid #cccccc'}}>
+                    <Dropzone onDrop={this.onDrop} multiple={false}
+                              style={{width:152,height:152,border:'1px solid #cccccc'}}>
                         <img src="/image/noimg.jpg" width="150"/>
                     </Dropzone>
                 </div>

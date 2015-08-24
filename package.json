@@ -28,6 +28,8 @@
     "underscore": "~1.8.3",
     "react": "~0.13.3",
     "node-jsx": "~0.13.3",
-    "react-engine":"~1.7.0"
+    "react-engine":"~1.7.0",
+
+    "wolfy87-eventemitter":"~4.2.11"
   }
 }

@@ -26,6 +26,9 @@ Validator.methods = {
         return !value || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
     },
     pattern: function (value, rulevalue) {
+        if (!value) {
+            return true;
+        }
         return rulevalue.test(value);
     },
     equalTo: function (value, rulevalue, component) {
@@ -37,7 +40,7 @@ Validator.methods = {
 Validator.Mixin = {
     getInitialState: function () {
         return {
-            _value: this.props.value || '',
+            _value: this.props.defaultValue || '',
             _validType: '',
             _isValid: true
         };
@@ -179,7 +182,7 @@ Validator.Form = React.createClass({
         var action = this.props.action;
         var className = this.props.className;
         return React.DOM.form({
-            noValidate:true,
+            noValidate: true,
             method: method,
             action: action,
             className: className,

@@ -3,13 +3,14 @@ var Router = require('react-router');
 var $ = require('jquery');
 var backend = require('../../utils/backend');
 var moment = require('moment');
+var ee = require('../../utils/eventemitter');
 
 var Sidebar = require('./sidebar.jsx');
 
 var Store = React.createClass({
     componentDidMount: function () {
         backend.get.manageStore().then(function (response) {
-            this.props.update(response);
+            ee.emit('update', response);
         }.bind(this));
     },
     render: function () {

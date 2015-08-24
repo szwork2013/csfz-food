@@ -5,9 +5,9 @@
     "to": "index"
   },
   {
-    "channel": "store",
-    "text": "店铺",
-    "to": "store"
+    "channel": "vo",
+    "text": "我的",
+    "to": "vo-message"
   },
   {
     "channel": "manage",

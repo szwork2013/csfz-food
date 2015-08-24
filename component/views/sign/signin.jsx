@@ -1,22 +1,25 @@
 var React = require('react');
 var Router = require('react-router');
 var $ = require('jquery');
+var _ = require('underscore');
 var Validator = require('../../utils/react-validator');
 var constants = require('../../../lib/utils/constants');
 var backend = require('../../utils/backend');
+var ee = require('../../utils/eventemitter');
 
+var Link = Router.Link;
 
 var Signin = React.createClass({
     mixins: [Router.Navigation],
     getInitialState: function () {
         return {
             isSubmitting: false,
-            errors: []
+            errors: {}
         };
     },
     componentDidMount: function () {
         backend.get.signin().then(function (response) {
-            this.props.update(response);
+            ee.emit('update', response);
         }.bind(this));
     },
     handleSubmit: function (e, model) {
@@ -39,8 +42,8 @@ var Signin = React.createClass({
                 <div className="page-header">
                     <h3>用户登录</h3>
                 </div>
-                <div className="alert alert-danger" style={{display:this.state.errors.length>0?'block':'none'}}>
-                    {this.state.errors.map(function (error, index) {
+                <div className="alert alert-danger" style={{display:_.isEmpty(this.state.errors)?'none':'block'}}>
+                    {_.values(this.state.errors).map(function (error, index) {
                         return <p key={index}>{error}</p>
                     })}
                 </div>
@@ -64,6 +67,9 @@ var Signin = React.createClass({
                         <button type="submit" className="btn btn-primary btn-block"
                                 disabled={this.state.isSubmitting}>{btnText}</button>
                     </div>
+                </div>
+                <div className="form-group">
+                    <p className="col-sm-12 text-muted">还没有账号，马上<Link to="signup">注册</Link></p>
                 </div>
             </Validator.Form>
         )

@@ -6,6 +6,7 @@ var Input = require('../common/input.jsx');
 var Validator = require('../../utils/react-validator');
 var Constants = require('../../../lib/utils/constants');
 var backend = require('../../utils/backend');
+var ee = require('../../utils/eventemitter');
 
 var Link = Router.Link;
 
@@ -19,7 +20,7 @@ var Signup = React.createClass({
     },
     componentDidMount: function () {
         backend.get.signup().then(function (response) {
-            this.props.update(response);
+            ee.emit('update', response);
         }.bind(this));
     },
     handleSubmit: function (e, model) {
@@ -55,7 +56,7 @@ var Signup = React.createClass({
                        required="true"
                        requiredError="请输入邮箱"
                        email="true"
-                       patternError="邮箱格式错误"
+                       emailError="邮箱格式错误"
                     />
                 <Input name="password"
                        placeholder="Password"

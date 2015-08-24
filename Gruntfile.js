@@ -7,13 +7,14 @@ module.exports = function (grunt) {
     grunt.initConfig({
         concat: {
             options: {
-                separator: ';'
+                separator: '\n'
             },
             dist: {
                 src: [
                     'node_modules/react/dist/react.min.js',
                     'node_modules/react-router/umd/ReactRouter.min.js',
                     'node_modules/reflux/dist/reflux.min.js',
+                    'node_modules/wolfy87-eventemitter/EventEmitter.min.js',
 
 
                     'node_modules/jquery/dist/jquery.min.js',

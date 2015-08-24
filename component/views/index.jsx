@@ -1,10 +1,11 @@
 var React = require('react');
 var backend = require('../utils/backend');
+var ee = require('../utils/eventemitter');
 
 module.exports = React.createClass({
     componentDidMount: function () {
         backend.get.home().then(function (response) {
-            this.props.update(response);
+            ee.emit('update', response);
         }.bind(this))
     },
     render: function () {

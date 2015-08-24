@@ -1,0 +1,14 @@
+[
+  {
+    "channel": "vo-message",
+    "text": "基本信息",
+    "iconClass": "fa-building",
+    "to": "vo-message"
+  },
+  {
+    "channel": "vo-password",
+    "text": "修改密码",
+    "iconClass": "fa-building",
+    "to": "vo-password"
+  }
+]

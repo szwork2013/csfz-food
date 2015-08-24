@@ -2,13 +2,14 @@ var React = require('react');
 var Router = require('react-router');
 var $ = require('jquery');
 var backend = require('../../utils/backend');
+var ee = require('../../utils/eventemitter');
 
 var Link = Router.Link;
 
 var Store = React.createClass({
     componentDidMount: function () {
         backend.get.storeList().then(function (response) {
-            this.props.update(response);
+            ee.emit('update', response);
         }.bind(this));
     },
     render: function () {
