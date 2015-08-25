@@ -9,8 +9,7 @@ var Constants = require('../../../lib/utils/constants');
 
 
 var LabelInput = require('../common/label-input.jsx');
-var Sidebar = require('../common/sidebar.jsx');
-var SidebarJSON = require('./sidebar.json');
+var Sidebar = require('./sidebar.jsx');
 
 module.exports = React.createClass({
     mixins: [Router.Navigation],
@@ -21,7 +20,7 @@ module.exports = React.createClass({
         };
     },
     componentDidMount: function () {
-        backend.get.voPassword().then(function (response) {
+        backend.get.accountPassword().then(function (response) {
             ee.emit('update', response);
         }.bind(this));
     },
@@ -29,7 +28,7 @@ module.exports = React.createClass({
         e.preventDefault();
         this.setState({isSubmitting: true});
 
-        backend.post.voPassword(model).then(function (response) {
+        backend.post.accountPassword(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
                 this.transitionTo('index');
             } else {
@@ -41,7 +40,7 @@ module.exports = React.createClass({
         var btnText = this.state.isSubmitting ? '修改中...' : '修改';
         return (
             <div>
-                <Sidebar channel="vo-password" channels={SidebarJSON}/>
+                <Sidebar channel="account-password"/>
 
                 <div className="main-content">
                     <div className="page-header">

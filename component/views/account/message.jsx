@@ -9,8 +9,7 @@ var Constants = require('../../../lib/utils/constants');
 
 
 var LabelInput = require('../common/label-input.jsx');
-var Sidebar = require('../common/sidebar.jsx');
-var SidebarJSON = require('./sidebar.json');
+var Sidebar = require('./sidebar.jsx');
 
 module.exports = React.createClass({
     mixins: [Router.Navigation],
@@ -21,7 +20,7 @@ module.exports = React.createClass({
         };
     },
     componentDidMount: function () {
-        backend.get.voMessage().then(function (response) {
+        backend.get.accountMessage().then(function (response) {
             ee.emit('update', response);
         }.bind(this));
     },
@@ -29,7 +28,7 @@ module.exports = React.createClass({
         e.preventDefault();
         this.setState({isSubmitting: true});
 
-        backend.post.voMessage(model).then(function (response) {
+        backend.post.accountMessage(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
                 this.transitionTo('index');
             } else {
@@ -42,7 +41,7 @@ module.exports = React.createClass({
         var user = this.props.data || {};
         return !user._id ? <div></div> :
             <div>
-                <Sidebar channel="vo-message" channels={SidebarJSON}/>
+                <Sidebar channel="account-message"/>
 
                 <div className="main-content">
                     <div className="page-header">

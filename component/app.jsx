@@ -2,6 +2,7 @@ var React = require('react');
 var Router = require('react-router');
 var $ = require('jquery');
 var ee = require('./utils/eventemitter');
+var bootstrap = require('./bootstrap/index');
 
 var Layout = require('./views/layouts/default.jsx');
 
@@ -16,6 +17,8 @@ var App = React.createClass({
         ee.on('update', function (response) {
             this.setState({response: response});
         }.bind(this));
+
+        bootstrap();
     },
     render: function () {
         return (
@@ -25,5 +28,7 @@ var App = React.createClass({
         )
     }
 });
+
+
 
 module.exports = App;

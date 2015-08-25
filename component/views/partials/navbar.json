@@ -5,13 +5,8 @@
     "to": "index"
   },
   {
-    "channel": "vo",
+    "channel": "account",
     "text": "我的",
-    "to": "vo-message"
-  },
-  {
-    "channel": "manage",
-    "text": "管理",
-    "to": "manage-store"
+    "to": "account-message"
   }
 ]

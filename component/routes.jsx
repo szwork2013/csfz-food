@@ -13,8 +13,8 @@ var Manage = require('./views/manage/index.jsx');
 var ManageStore = require('./views/manage/store.jsx');
 var ManageStoreNew = require('./views/manage/store-new.jsx');
 
-var VoMessage =require('./views/vo/message.jsx');
-var VoPassword =require('./views/vo/password.jsx');
+var AccountMessage =require('./views/account/message.jsx');
+var AccountPassword =require('./views/account/password.jsx');
 
 var Store = require('./views/store/index.jsx');
 
@@ -24,8 +24,8 @@ var routes = (
         <Route name="signin" path="signin" handler={Signin}/>
         <Route name="signup" path="signup" handler={Signup}/>
 
-        <Route name="vo-message" path="vo/message" handler={VoMessage}/>
-        <Route name="vo-password" path="vo/password" handler={VoPassword}/>
+        <Route name="account-message" path="account/message" handler={AccountMessage}/>
+        <Route name="account-password" path="account/password" handler={AccountPassword}/>
 
         <Route name="store" path="store" handler={Store}/>
 

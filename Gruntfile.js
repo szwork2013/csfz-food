@@ -19,7 +19,9 @@ module.exports = function (grunt) {
 
                     'node_modules/jquery/dist/jquery.min.js',
                     'node_modules/moment/min/moment.min.js',
-                    'node_modules/underscore/underscore-min.js'
+                    'node_modules/underscore/underscore-min.js',
+
+                    'public/script/bootstrap.min.js'
                 ],
                 dest: 'public/build/lib/bundle.js'
             }

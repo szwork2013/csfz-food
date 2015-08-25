@@ -1,14 +1,14 @@
 [
   {
-    "channel": "vo-message",
+    "channel": "account-message",
     "text": "基本信息",
     "iconClass": "fa-building",
-    "to": "vo-message"
+    "to": "account-message"
   },
   {
-    "channel": "vo-password",
+    "channel": "account-password",
     "text": "修改密码",
     "iconClass": "fa-book",
-    "to": "vo-password"
+    "to": "account-password"
   }
 ]

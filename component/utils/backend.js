@@ -8,14 +8,11 @@ module.exports = {
         signin: function () {
             return $.get('/signin');
         },
-        voMessage: function () {
-            return $.get('/vo/message');
+        accountMessage: function () {
+            return $.get('/account/message');
         },
-        voPassword: function () {
-            return $.get('/vo/password');
-        },
-        storeList: function () {
-            return $.get('/store');
+        accountPassword: function () {
+            return $.get('/account/password');
         },
         home: function () {
             return $.get('/');
@@ -28,11 +25,11 @@ module.exports = {
         signin: function (data) {
             return $.post('/signin', data);
         },
-        voMessage: function (data) {
-            return $.post('/vo/message', data);
+        accountMessage: function (data) {
+            return $.post('/account/message', data);
         },
-        voPassword: function (data) {
-            return $.post('/vo/password',data);
+        accountPassword: function (data) {
+            return $.post('/account/password',data);
         }
     }
 };

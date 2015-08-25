@@ -23,6 +23,7 @@ var NavItem = React.createClass({
 module.exports = React.createClass({
     render: function () {
         var session = this.props.session;
+
         return (
             <nav className="navbar navbar-default navbar-fixed-top">
                 <div className="container-fluid">
@@ -37,21 +38,17 @@ module.exports = React.createClass({
                             }.bind(this))}
                         </ul>
 
-                        {session.user ?
-                            <ul className="nav navbar-nav navbar-right">
-                                <li><a href="">{'welcome'+session.user.realName}</a></li>
-                            </ul> :
-                            (
-                                <ul className="nav navbar-nav navbar-right">
-                                    <li>
-                                        <Link to="signin">登录</Link>
-                                    </li>
-                                    <li>
-                                        <Link to="signup">注册</Link>
-                                    </li>
+                        <ul className="nav navbar-nav navbar-right">
+                            <li className="dropdown">
+                                <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+                                    {session.user.realName} <span className="caret"></span>
+                                </a>
+                                <ul className="dropdown-menu">
+                                    <li><Link to="account-message">账号管理</Link></li>
+                                    <li><a href="#">注销</a></li>
                                 </ul>
-                            )
-                        }
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
