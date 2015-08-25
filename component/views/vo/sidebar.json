@@ -8,7 +8,7 @@
   {
     "channel": "vo-password",
     "text": "修改密码",
-    "iconClass": "fa-building",
+    "iconClass": "fa-book",
     "to": "vo-password"
   }
 ]

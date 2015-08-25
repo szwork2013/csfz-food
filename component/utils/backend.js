@@ -19,12 +19,6 @@ module.exports = {
         },
         home: function () {
             return $.get('/');
-        },
-        manageStore: function () {
-            return $.get('/manage/store');
-        },
-        manageStoreNew: function () {
-            return $.get('/manage/store/new');
         }
     },
     post: {
@@ -37,11 +31,8 @@ module.exports = {
         voMessage: function (data) {
             return $.post('/vo/message', data);
         },
-        manageStoreNew: function (data) {
-            return $.post('/manage/store/new', data);
-        },
-        imageUpload: function (data) {
-
+        voPassword: function (data) {
+            return $.post('/vo/password',data);
         }
     }
 };

@@ -40,7 +40,7 @@ module.exports = React.createClass({
     render: function () {
         var btnText = this.state.isSubmitting ? '保存中...' : '保存';
         var user = this.props.data || {};
-        return (
+        return !user._id ? <div></div> :
             <div>
                 <Sidebar channel="vo-message" channels={SidebarJSON}/>
 
@@ -93,8 +93,9 @@ module.exports = React.createClass({
                                     pattern={Constants.regexp.MOBILE}
                                     patternError="手机格式错误"
                             />
+
                         <div className="form-group">
-                            <div className="col-sm-12">
+                            <div className="col-lg-offset-2 col-lg-10">
                                 <button type="submit" className="btn btn-primary btn-block"
                                         disabled={this.state.isSubmitting}>{btnText}</button>
                             </div>
@@ -102,6 +103,5 @@ module.exports = React.createClass({
                     </Validator.Form>
                 </div>
             </div>
-        )
     }
 });

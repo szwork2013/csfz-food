@@ -8,7 +8,7 @@ module.exports = React.createClass({
         var channel = this.props.channel;
         return (
             <div className="main-sidebar">
-                <div className="header">管理导航</div>
+                <div className="header">内容导航</div>
                 <ul className="nav nav-pills nav-stacked">
                     {this.props.channels.map(function (nav, index) {
                         return (

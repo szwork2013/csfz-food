@@ -441,6 +441,9 @@
 	        voMessage: function (data) {
 	            return $.post('/vo/message', data);
 	        },
+	        voPassword: function (data) {
+	            return $.post('/vo/password',data);
+	        },
 	        manageStoreNew: function (data) {
 	            return $.post('/manage/store/new', data);
 	        },
@@ -1707,7 +1710,7 @@
 	    render: function render() {
 	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
 	        var user = this.props.data || {};
-	        return React.createElement(
+	        return !user._id ? React.createElement('div', null) : React.createElement(
 	            'div',
 	            null,
 	            React.createElement(Sidebar, { channel: 'vo-message', channels: SidebarJSON }),
@@ -1788,7 +1791,7 @@
 	                        { className: 'form-group' },
 	                        React.createElement(
 	                            'div',
-	                            { className: 'col-sm-12' },
+	                            { className: 'col-lg-offset-2 col-lg-10' },
 	                            React.createElement(
 	                                'button',
 	                                { type: 'submit', className: 'btn btn-primary btn-block',
@@ -1831,7 +1834,7 @@
 	        var errorMsg = this.isValid() ? '' : this.getErrorMsg();
 
 	        var classes = 'form-group' + (this.isInvalid() ? ' has-error' : '');
-	        console.log(this.props);
+
 	        return React.createElement(
 	            'div',
 	            { className: classes },
@@ -1887,7 +1890,7 @@
 	            React.createElement(
 	                'div',
 	                { className: 'header' },
-	                '管理导航'
+	                '内容导航'
 	            ),
 	            React.createElement(
 	                'ul',
@@ -1923,7 +1926,7 @@
 		{
 			"channel": "vo-password",
 			"text": "修改密码",
-			"iconClass": "fa-building",
+			"iconClass": "fa-book",
 			"to": "vo-password"
 		}
 	]
@@ -1937,25 +1940,120 @@
 	var React = __webpack_require__(3);
 	var Router = __webpack_require__(4);
 	var $ = __webpack_require__(6);
+	var _ = __webpack_require__(16);
 	var backend = __webpack_require__(13);
 	var ee = __webpack_require__(7);
+	var Validator = __webpack_require__(15);
+	var Constants = __webpack_require__(17);
 
+	var LabelInput = __webpack_require__(26);
 	var Sidebar = __webpack_require__(27);
 	var SidebarJSON = __webpack_require__(28);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
+	    mixins: [Router.Navigation],
+	    getInitialState: function getInitialState() {
+	        return {
+	            isSubmitting: false,
+	            errors: {}
+	        };
+	    },
 	    componentDidMount: function componentDidMount() {
 	        backend.get.voPassword().then((function (response) {
 	            ee.emit('update', response);
 	        }).bind(this));
 	    },
+	    handleSubmit: function handleSubmit(e, model) {
+	        e.preventDefault();
+	        this.setState({ isSubmitting: true });
+
+	        backend.post.voPassword(model).then((function (response) {
+	            if (response.code === Constants.resCode.COMMON) {
+	                this.transitionTo('index');
+	            } else {
+	                this.setState({ errors: response.errors, isSubmitting: false });
+	            }
+	        }).bind(this));
+	    },
 	    render: function render() {
+	        var btnText = this.state.isSubmitting ? '修改中...' : '修改';
 	        return React.createElement(
 	            'div',
 	            null,
-	            React.createElement(Sidebar, { channel: 'vo-password', channels: SidebarJSON })
+	            React.createElement(Sidebar, { channel: 'vo-password', channels: SidebarJSON }),
+	            React.createElement(
+	                'div',
+	                { className: 'main-content' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'page-header' },
+	                    React.createElement(
+	                        'h4',
+	                        null,
+	                        '修改密码'
+	                    )
+	                ),
+	                React.createElement(
+	                    Validator.Form,
+	                    { className: 'form-horizontal col-lg-4', submit: this.handleSubmit, type: 'blur' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'alert alert-danger',
+	                            style: { display: _.isEmpty(this.state.errors) ? 'none' : 'block' } },
+	                        _.values(this.state.errors).map(function (error, index) {
+	                            return React.createElement(
+	                                'p',
+	                                { key: index },
+	                                error
+	                            );
+	                        })
+	                    ),
+	                    React.createElement(LabelInput, { name: 'oldPassword',
+	                        type: 'password',
+	                        key: 'oldPassword',
+	                        maxLength: '15',
+	                        label: '原密码',
+	                        required: 'true',
+	                        requiredError: '请输入原密码',
+	                        pattern: Constants.regexp.PASSWORD,
+	                        patternError: '原密码格式错误'
+	                    }),
+	                    React.createElement(LabelInput, { name: 'password',
+	                        type: 'password',
+	                        key: 'password',
+	                        maxLength: '15',
+	                        label: '密码',
+	                        required: 'true',
+	                        requiredError: '请输入密码',
+	                        pattern: Constants.regexp.PASSWORD,
+	                        patternError: '密码格式错误'
+	                    }),
+	                    React.createElement(LabelInput, { name: 'confirmPassword',
+	                        type: 'password',
+	                        key: 'confirmPassword',
+	                        label: '确认密码',
+	                        maxLength: '15',
+	                        equalTo: 'password',
+	                        equalToError: '两次密码输入不一致'
+	                    }),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        React.createElement(
+	                            'div',
+	                            { className: 'col-lg-offset-2 col-lg-10' },
+	                            React.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-primary btn-block',
+	                                    disabled: this.state.isSubmitting },
+	                                btnText
+	                            )
+	                        )
+	                    )
+	                )
+	            )
 	        );
 	    }
 	});
