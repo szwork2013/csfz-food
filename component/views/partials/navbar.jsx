@@ -45,7 +45,7 @@ module.exports = React.createClass({
                                 </a>
                                 <ul className="dropdown-menu">
                                     <li><Link to="account-message">账号管理</Link></li>
-                                    <li><a href="#">注销</a></li>
+                                    <li><a href="/signout">注销</a></li>
                                 </ul>
                             </li>
                         </ul>

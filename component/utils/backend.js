@@ -14,6 +14,9 @@ module.exports = {
         accountPassword: function () {
             return $.get('/account/password');
         },
+        groupMessage: function () {
+            return $.get('/group/message');
+        },
         home: function () {
             return $.get('/');
         }
@@ -29,7 +32,10 @@ module.exports = {
             return $.post('/account/message', data);
         },
         accountPassword: function (data) {
-            return $.post('/account/password',data);
+            return $.post('/account/password', data);
+        },
+        groupMessage: function (data) {
+            return $.post('/group/message', data);
         }
     }
 };

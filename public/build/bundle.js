@@ -45,12 +45,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Routes = __webpack_require__(1);
-	var Client = __webpack_require__(33);
+	var Client = __webpack_require__(36);
 
 	var options = {
 	    routes: Routes,
 	    viewResolver: function(viewName) {
-	        return __webpack_require__(35)("./" + viewName);
+	        return __webpack_require__(38)("./" + viewName);
 	    }
 	};
 
@@ -64,91 +64,73 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
 
 	var Route = Router.Route;
 	var DefaultRoute = Router.DefaultRoute;
 
-	var App = __webpack_require__(5);
-	var Index = __webpack_require__(13);
-	var Signin = __webpack_require__(15);
-	var Signup = __webpack_require__(19);
+	var App = __webpack_require__(4);
+	var Index = __webpack_require__(12);
+	var Signin = __webpack_require__(14);
+	var Signup = __webpack_require__(18);
 
-	var Manage = __webpack_require__(2);
+	var Manage = __webpack_require__(20);
 	var ManageStore = __webpack_require__(21);
 	var ManageStoreNew = __webpack_require__(24);
 
 	var AccountMessage = __webpack_require__(26);
 	var AccountPassword = __webpack_require__(31);
 
-	var Store = __webpack_require__(32);
+	var groupMessage = __webpack_require__(32);
+
+	var Store = __webpack_require__(35);
 
 	var routes = React.createElement(
-	    Route,
-	    { handler: App, path: '/' },
-	    React.createElement(DefaultRoute, { name: 'index', handler: Index }),
-	    React.createElement(Route, { name: 'signin', path: 'signin', handler: Signin }),
-	    React.createElement(Route, { name: 'signup', path: 'signup', handler: Signup }),
-	    React.createElement(Route, { name: 'account-message', path: 'account/message', handler: AccountMessage }),
-	    React.createElement(Route, { name: 'account-password', path: 'account/password', handler: AccountPassword }),
-	    React.createElement(Route, { name: 'store', path: 'store', handler: Store }),
-	    React.createElement(
 	        Route,
-	        { name: 'manage', path: 'manage', handler: Manage },
-	        React.createElement(Route, { name: 'manage-store', path: 'store', handler: ManageStore }),
-	        React.createElement(Route, { name: 'manage-store-new', path: 'store/new', handler: ManageStoreNew })
-	    )
+	        { handler: App, path: '/' },
+	        React.createElement(DefaultRoute, { name: 'index', handler: Index }),
+	        React.createElement(Route, { name: 'signin', path: 'signin', handler: Signin }),
+	        React.createElement(Route, { name: 'signup', path: 'signup', handler: Signup }),
+	        React.createElement(Route, { name: 'account-message', path: 'account/message', handler: AccountMessage }),
+	        React.createElement(Route, { name: 'account-password', path: 'account/password', handler: AccountPassword }),
+	        React.createElement(Route, { name: 'group-message', path: 'group/message', handler: groupMessage }),
+	        React.createElement(Route, { name: 'store', path: 'store', handler: Store }),
+	        React.createElement(
+	                Route,
+	                { name: 'manage', path: 'manage', handler: Manage },
+	                React.createElement(Route, { name: 'manage-store', path: 'store', handler: ManageStore }),
+	                React.createElement(Route, { name: 'manage-store-new', path: 'store/new', handler: ManageStoreNew })
+	        )
 	);
 
 	module.exports = routes;
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-
-	var RouteHandler = Router.RouteHandler;
-
-	var Manage = React.createClass({
-	    displayName: 'Manage',
-
-	    render: function render() {
-	        return React.createElement(RouteHandler, this.props);
-	    }
-	});
-
-	module.exports = Manage;
-
-/***/ },
-/* 3 */
 /***/ function(module, exports) {
 
 	module.exports = React;
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports) {
 
 	module.exports = ReactRouter;
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var ee = __webpack_require__(6);
-	var bootstrap = __webpack_require__(9);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var $ = __webpack_require__(7);
+	var ee = __webpack_require__(5);
+	var bootstrap = __webpack_require__(8);
 
-	var Layout = __webpack_require__(10);
+	var Layout = __webpack_require__(9);
 
 	var RouteHandler = Router.RouteHandler;
 
@@ -177,30 +159,30 @@
 	module.exports = App;
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var EventEmitter = __webpack_require__(7);
+	var EventEmitter = __webpack_require__(6);
 
 	module.exports = new EventEmitter();
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = EventEmitter;
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	module.exports = jQuery;
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $ = __webpack_require__(8);
+	var $ = __webpack_require__(7);
 
 
 	module.exports = function () {
@@ -209,14 +191,14 @@
 
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(2);
 
-	var Navbar = __webpack_require__(11);
+	var Navbar = __webpack_require__(10);
 
 	var Layout = React.createClass({
 	    displayName: 'Layout',
@@ -257,17 +239,17 @@
 	module.exports = Layout;
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
 
 	var Link = Router.Link;
 
-	var navJson = __webpack_require__(12);
+	var navJson = __webpack_require__(11);
 
 	var NavItem = React.createClass({
 	    displayName: 'NavItem',
@@ -351,7 +333,7 @@
 	                                    null,
 	                                    React.createElement(
 	                                        'a',
-	                                        { href: '#' },
+	                                        { href: '/signout' },
 	                                        '注销'
 	                                    )
 	                                )
@@ -365,7 +347,7 @@
 	});
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -375,21 +357,21 @@
 			"to": "index"
 		},
 		{
-			"channel": "account",
-			"text": "我的",
-			"to": "account-message"
+			"channel": "group",
+			"text": "餐组管理",
+			"to": "group-message"
 		}
 	]
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var backend = __webpack_require__(14);
-	var ee = __webpack_require__(6);
+	var React = __webpack_require__(2);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -413,10 +395,10 @@
 	});
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $ = __webpack_require__(8);
+	var $ = __webpack_require__(7);
 
 	module.exports = {
 	    get: {
@@ -431,6 +413,9 @@
 	        },
 	        accountPassword: function () {
 	            return $.get('/account/password');
+	        },
+	        groupMessage: function () {
+	            return $.get('/group/message');
 	        },
 	        home: function () {
 	            return $.get('/');
@@ -447,26 +432,28 @@
 	            return $.post('/account/message', data);
 	        },
 	        accountPassword: function (data) {
-	            return $.post('/account/password',data);
+	            return $.post('/account/password', data);
+	        },
+	        groupMessage: function (data) {
+	            return $.post('/group/message', data);
 	        }
 	    }
 	};
 
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var _ = __webpack_require__(17);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var _ = __webpack_require__(15);
 	var Validator = __webpack_require__(16);
-	var constants = __webpack_require__(18);
-	var backend = __webpack_require__(14);
-	var ee = __webpack_require__(6);
+	var constants = __webpack_require__(17);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
 
 	var Link = Router.Link;
 
@@ -619,10 +606,16 @@
 	module.exports = Signin;
 
 /***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = _;
+
+/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(2);
 
 	var Validator = {};
 
@@ -664,13 +657,16 @@
 	Validator.Mixin = {
 	    getInitialState: function () {
 	        return {
-	            _value: this.props.defaultValue || '',
+	            _value: '',
 	            _validType: '',
 	            _isValid: true
 	        };
 	    },
 	    componentWillMount: function () {
 	        this.props.attachToForm(this);
+	    },
+	    componentWillReceiveProps: function (nextProps) {
+	        this.setState({_value: nextProps.defaultValue || ''});
 	    },
 	    setValue: function (value) {
 	        this.setState({_value: value}, function () {
@@ -827,12 +823,6 @@
 /* 17 */
 /***/ function(module, exports) {
 
-	module.exports = _;
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
 	/**
 	 * Created by yuyangyang on 2015/4/29.
 	 */
@@ -856,20 +846,19 @@
 	};
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var _ = __webpack_require__(17);
-	var Input = __webpack_require__(20);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var _ = __webpack_require__(15);
+	var Input = __webpack_require__(19);
 	var Validator = __webpack_require__(16);
-	var Constants = __webpack_require__(18);
-	var backend = __webpack_require__(14);
-	var ee = __webpack_require__(6);
+	var Constants = __webpack_require__(17);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
 
 	var Link = Router.Link;
 
@@ -1001,14 +990,14 @@
 	module.exports = Signup;
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(2);
 	var Validator = __webpack_require__(16);
 
 	module.exports = React.createClass({
@@ -1036,6 +1025,7 @@
 	                { className: 'col-sm-12' },
 	                React.createElement('input', _extends({}, this.props, {
 	                    className: 'form-control',
+	                    value: this.state._value,
 	                    onChange: this.handleChange,
 	                    onBlur: this.handleBlur,
 	                    onFocus: this.handleFocus
@@ -1057,17 +1047,38 @@
 	});
 
 /***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+
+	var RouteHandler = Router.RouteHandler;
+
+	var Manage = React.createClass({
+	    displayName: 'Manage',
+
+	    render: function render() {
+	        return React.createElement(RouteHandler, this.props);
+	    }
+	});
+
+	module.exports = Manage;
+
+/***/ },
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var backend = __webpack_require__(14);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var $ = __webpack_require__(7);
+	var backend = __webpack_require__(13);
 	var moment = __webpack_require__(22);
-	var ee = __webpack_require__(6);
+	var ee = __webpack_require__(5);
 
 	var Sidebar = __webpack_require__(23);
 
@@ -1267,8 +1278,8 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
 
 	var Link = Router.Link;
 
@@ -1318,11 +1329,11 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var backend = __webpack_require__(14);
-	var constants = __webpack_require__(18);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var $ = __webpack_require__(7);
+	var backend = __webpack_require__(13);
+	var constants = __webpack_require__(17);
 	var Validator = __webpack_require__(16);
 	var Dropzone = __webpack_require__(25);
 
@@ -1556,7 +1567,7 @@
 /* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(2);
 
 	var Dropzone = React.createClass({
 	    getDefaultProps: function() {
@@ -1666,14 +1677,14 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var _ = __webpack_require__(17);
-	var backend = __webpack_require__(14);
-	var ee = __webpack_require__(6);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(15);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
 	var Validator = __webpack_require__(16);
-	var Constants = __webpack_require__(18);
+	var Constants = __webpack_require__(17);
 
 	var LabelInput = __webpack_require__(27);
 	var Sidebar = __webpack_require__(28);
@@ -1708,7 +1719,7 @@
 	    render: function render() {
 	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
 	        var user = this.props.data || {};
-	        return !user._id ? React.createElement('div', null) : React.createElement(
+	        return React.createElement(
 	            'div',
 	            null,
 	            React.createElement(Sidebar, { channel: 'account-message' }),
@@ -1750,7 +1761,7 @@
 	                        React.createElement(
 	                            'div',
 	                            { className: 'col-lg-10' },
-	                            React.createElement('input', { type: 'text', className: 'form-control', defaultValue: user.email, disabled: true })
+	                            React.createElement('input', { type: 'text', className: 'form-control', value: user.email, disabled: true })
 	                        )
 	                    ),
 	                    React.createElement(LabelInput, { name: 'realName',
@@ -1812,7 +1823,7 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(2);
 	var Validator = __webpack_require__(16);
 
 	module.exports = React.createClass({
@@ -1846,6 +1857,7 @@
 	                { className: 'col-lg-10' },
 	                React.createElement('input', _extends({}, this.props, {
 	                    className: 'form-control',
+	                    value: this.state._value,
 	                    onChange: this.handleChange,
 	                    onBlur: this.handleBlur,
 	                    onFocus: this.handleFocus
@@ -1872,8 +1884,8 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
 
 	var Sidebar = __webpack_require__(29);
 	var SidebarJSON = __webpack_require__(30);
@@ -1892,8 +1904,8 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
 
 	var Link = Router.Link;
 
@@ -1955,14 +1967,14 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var _ = __webpack_require__(17);
-	var backend = __webpack_require__(14);
-	var ee = __webpack_require__(6);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(15);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
 	var Validator = __webpack_require__(16);
-	var Constants = __webpack_require__(18);
+	var Constants = __webpack_require__(17);
 
 	var LabelInput = __webpack_require__(27);
 	var Sidebar = __webpack_require__(28);
@@ -2081,11 +2093,157 @@
 
 	'use strict';
 
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
-	var $ = __webpack_require__(8);
-	var backend = __webpack_require__(14);
-	var ee = __webpack_require__(6);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var _ = __webpack_require__(15);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
+	var Validator = __webpack_require__(16);
+	var Constants = __webpack_require__(17);
+
+	var LabelInput = __webpack_require__(27);
+	var Sidebar = __webpack_require__(33);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Router.Navigation],
+	    getInitialState: function getInitialState() {
+	        return {
+	            isSubmitting: false,
+	            errors: {}
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        backend.get.groupMessage().then((function (response) {
+	            ee.emit('update', response);
+	        }).bind(this));
+	    },
+	    handleSubmit: function handleSubmit(e, model) {
+	        e.preventDefault();
+	        this.setState({ isSubmitting: true });
+
+	        var group = this.props.data;
+	        var groupId = group ? group.groupId : '';
+
+	        backend.post.groupMessage(_.extend({ groupId: groupId }, model)).then((function (response) {
+	            if (response.code === Constants.resCode.COMMON) {
+	                this.transitionTo('index');
+	            } else {
+	                this.setState({ errors: response.errors, isSubmitting: false });
+	            }
+	        }).bind(this));
+	    },
+	    render: function render() {
+	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
+	        var group = this.props.data || {};
+
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(Sidebar, { channel: 'group-message' }),
+	            React.createElement(
+	                'div',
+	                { className: 'main-content' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'page-header' },
+	                    React.createElement(
+	                        'h4',
+	                        null,
+	                        '基本信息'
+	                    )
+	                ),
+	                React.createElement(
+	                    Validator.Form,
+	                    { className: 'form-horizontal col-lg-4', submit: this.handleSubmit, type: 'blur' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'alert alert-danger',
+	                            style: { display: _.isEmpty(this.state.errors) ? 'none' : 'block' } },
+	                        _.values(this.state.errors).map(function (error, index) {
+	                            return React.createElement(
+	                                'p',
+	                                { key: index },
+	                                error
+	                            );
+	                        })
+	                    ),
+	                    React.createElement(LabelInput, { name: 'groupName',
+	                        type: 'text',
+	                        key: 'groupName',
+	                        maxLength: '20',
+	                        label: '餐组名称',
+	                        defaultValue: group.groupName,
+	                        required: 'true',
+	                        requiredError: '请输入餐组名称',
+	                        maxlen: '20',
+	                        maxlenError: '20个字符以内'
+	                    }),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        React.createElement(
+	                            'div',
+	                            { className: 'col-lg-offset-2 col-lg-10' },
+	                            React.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-primary btn-block',
+	                                    disabled: this.state.isSubmitting },
+	                                btnText
+	                            )
+	                        )
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+
+	var Sidebar = __webpack_require__(29);
+	var SidebarJSON = __webpack_require__(34);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    render: function render() {
+	        return React.createElement(Sidebar, { channel: this.props.channel, channels: SidebarJSON, header: '餐组管理' });
+	    }
+	});
+
+/***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	module.exports = [
+		{
+			"channel": "group-message",
+			"text": "基本信息",
+			"iconClass": "fa-building",
+			"to": "group-message"
+		}
+	]
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
+	var $ = __webpack_require__(7);
+	var backend = __webpack_require__(13);
+	var ee = __webpack_require__(5);
 
 	var Link = Router.Link;
 
@@ -2177,7 +2335,7 @@
 	module.exports = Store;
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*-------------------------------------------------------------------------------------------------------------------*\
@@ -2197,9 +2355,9 @@
 
 	'use strict';
 
-	var Config = __webpack_require__(34);
-	var React = __webpack_require__(3);
-	var Router = __webpack_require__(4);
+	var Config = __webpack_require__(37);
+	var React = __webpack_require__(2);
+	var Router = __webpack_require__(3);
 
 	// declaring like this helps in unit test
 	// dependency injection using `rewire` module
@@ -2257,7 +2415,7 @@
 
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -2269,7 +2427,7 @@
 	}
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
@@ -2278,21 +2436,25 @@
 		"./account/sidebar": 30,
 		"./account/sidebar.json": 30,
 		"./account/sidebar.jsx": 28,
-		"./common/input.jsx": 20,
+		"./common/input.jsx": 19,
 		"./common/label-input.jsx": 27,
 		"./common/sidebar.jsx": 29,
-		"./index.jsx": 13,
-		"./layouts/default.jsx": 10,
-		"./manage/index.jsx": 2,
+		"./group/message.jsx": 32,
+		"./group/sidebar": 34,
+		"./group/sidebar.json": 34,
+		"./group/sidebar.jsx": 33,
+		"./index.jsx": 12,
+		"./layouts/default.jsx": 9,
+		"./manage/index.jsx": 20,
 		"./manage/sidebar.jsx": 23,
 		"./manage/store-new.jsx": 24,
 		"./manage/store.jsx": 21,
-		"./partials/navbar": 12,
-		"./partials/navbar.json": 12,
-		"./partials/navbar.jsx": 11,
-		"./sign/signin.jsx": 15,
-		"./sign/signup.jsx": 19,
-		"./store/index.jsx": 32
+		"./partials/navbar": 11,
+		"./partials/navbar.json": 11,
+		"./partials/navbar.jsx": 10,
+		"./sign/signin.jsx": 14,
+		"./sign/signup.jsx": 18,
+		"./store/index.jsx": 35
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -2305,7 +2467,7 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 35;
+	webpackContext.id = 38;
 
 
 /***/ }

@@ -1,0 +1,8 @@
+[
+  {
+    "channel": "group-message",
+    "text": "基本信息",
+    "iconClass": "fa-building",
+    "to": "group-message"
+  }
+]

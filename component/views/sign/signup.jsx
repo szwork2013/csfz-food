@@ -1,6 +1,5 @@
 var React = require('react');
 var Router = require('react-router');
-var $ = require('jquery');
 var _ = require('underscore');
 var Input = require('../common/input.jsx');
 var Validator = require('../../utils/react-validator');

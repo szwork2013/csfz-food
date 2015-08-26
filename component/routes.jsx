@@ -16,6 +16,8 @@ var ManageStoreNew = require('./views/manage/store-new.jsx');
 var AccountMessage =require('./views/account/message.jsx');
 var AccountPassword =require('./views/account/password.jsx');
 
+var groupMessage =require('./views/group/message.jsx');
+
 var Store = require('./views/store/index.jsx');
 
 var routes = (
@@ -26,6 +28,8 @@ var routes = (
 
         <Route name="account-message" path="account/message" handler={AccountMessage}/>
         <Route name="account-password" path="account/password" handler={AccountPassword}/>
+
+        <Route name="group-message" path="group/message" handler={groupMessage}/>
 
         <Route name="store" path="store" handler={Store}/>
 

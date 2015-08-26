@@ -21,6 +21,7 @@ module.exports = React.createClass({
                 <div className="col-sm-12">
                     <input {...this.props}
                            className="form-control"
+                           value={this.state._value}
                            onChange={this.handleChange}
                            onBlur={this.handleBlur}
                            onFocus={this.handleFocus}
