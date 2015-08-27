@@ -2,27 +2,43 @@ var React = require('react');
 var Router = require('react-router');
 var $ = require('jquery');
 var _ = require('underscore');
+
 var backend = require('../../utils/backend');
-var ee = require('../../utils/eventemitter');
 var Validator = require('../../utils/react-validator');
 var Constants = require('../../../lib/utils/constants');
 
+//var DropzoneComponent = require('react-dropzone-component');
 
 var LabelInput = require('../common/label-input.jsx');
 var Sidebar = require('./sidebar.jsx');
 
 module.exports = React.createClass({
     mixins: [Router.Navigation],
+    getDefaultProps: function () {
+        return {
+            config: {
+                allowedFiletypes: ['.jpg', '.png', '.gif', '.jpeg', '.bmp'],
+                showFiletypeIcon: false,
+                postUrl: '/image/upload'
+            },
+            eventHandlers: {
+                success: function (data) {
+                    console.log(data)
+                }
+            },
+            djsConfig: {}
+        }
+    },
     getInitialState: function () {
         return {
+            headImg: this.props.data.headImg || '',
             isSubmitting: false,
+            initUpload: false,
             errors: {}
         };
     },
     componentDidMount: function () {
-        backend.get.accountMessage().then(function (response) {
-            ee.emit('update', response);
-        }.bind(this));
+        this.setState({initUpload: true});
     },
     handleSubmit: function (e, model) {
         e.preventDefault();
@@ -53,6 +69,15 @@ module.exports = React.createClass({
                             {_.values(this.state.errors).map(function (error, index) {
                                 return <p key={index}>{error}</p>
                             })}
+                        </div>
+                        <div className="form-group">
+                            <label className="col-lg-2 control-label">头像</label>
+
+                            <div className="col-lg-10">
+                                {this.state.initUpload ? <window.ReactDropzone config={this.props.config}
+                                                                               eventHandlers={this.props.eventHandlers}
+                                                                               djsConfig={this.props.djsConfig}/> : ''}
+                            </div>
                         </div>
                         <div className="form-group">
                             <label className="col-lg-2 control-label">邮箱</label>

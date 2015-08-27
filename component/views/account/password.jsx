@@ -3,7 +3,6 @@ var Router = require('react-router');
 var $ = require('jquery');
 var _ = require('underscore');
 var backend = require('../../utils/backend');
-var ee = require('../../utils/eventemitter');
 var Validator = require('../../utils/react-validator');
 var Constants = require('../../../lib/utils/constants');
 
@@ -18,11 +17,6 @@ module.exports = React.createClass({
             isSubmitting: false,
             errors: {}
         };
-    },
-    componentDidMount: function () {
-        backend.get.accountPassword().then(function (response) {
-            ee.emit('update', response);
-        }.bind(this));
     },
     handleSubmit: function (e, model) {
         e.preventDefault();

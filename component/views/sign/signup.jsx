@@ -5,7 +5,6 @@ var Input = require('../common/input.jsx');
 var Validator = require('../../utils/react-validator');
 var Constants = require('../../../lib/utils/constants');
 var backend = require('../../utils/backend');
-var ee = require('../../utils/eventemitter');
 
 var Link = Router.Link;
 
@@ -16,11 +15,6 @@ var Signup = React.createClass({
             isSubmitting: false,
             errors: {}
         };
-    },
-    componentDidMount: function () {
-        backend.get.signup().then(function (response) {
-            ee.emit('update', response);
-        }.bind(this));
     },
     handleSubmit: function (e, model) {
         e.preventDefault();

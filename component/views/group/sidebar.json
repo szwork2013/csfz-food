@@ -1,7 +1,13 @@
 [
   {
+    "channel": "group",
+    "text": "所有餐组",
+    "iconClass": "fa-building",
+    "to": "group"
+  },
+  {
     "channel": "group-message",
-    "text": "基本信息",
+    "text": "我的餐组",
     "iconClass": "fa-building",
     "to": "group-message"
   }

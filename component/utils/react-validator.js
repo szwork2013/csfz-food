@@ -40,16 +40,13 @@ Validator.methods = {
 Validator.Mixin = {
     getInitialState: function () {
         return {
-            _value: '',
+            _value: this.props.defaultValue || '',
             _validType: '',
             _isValid: true
         };
     },
     componentWillMount: function () {
         this.props.attachToForm(this);
-    },
-    componentWillReceiveProps: function (nextProps) {
-        this.setState({_value: nextProps.defaultValue || ''});
     },
     setValue: function (value) {
         this.setState({_value: value}, function () {

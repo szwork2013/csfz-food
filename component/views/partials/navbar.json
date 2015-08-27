@@ -7,6 +7,6 @@
   {
     "channel": "group",
     "text": "餐组管理",
-    "to": "group-message"
+    "to": "group"
   }
 ]

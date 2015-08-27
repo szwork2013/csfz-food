@@ -1,7 +1,6 @@
 var React = require('react');
 var Router = require('react-router');
 var $ = require('jquery');
-var ee = require('./utils/eventemitter');
 var bootstrap = require('./bootstrap/index');
 
 var Layout = require('./views/layouts/default.jsx');
@@ -9,26 +8,20 @@ var Layout = require('./views/layouts/default.jsx');
 var RouteHandler = Router.RouteHandler;
 
 
-var App = React.createClass({
-    getInitialState: function () {
-        return {response: this.props};
-    },
+module.exports  = React.createClass({
     componentDidMount: function () {
-        ee.on('update', function (response) {
-            this.setState({response: response});
-        }.bind(this));
-
         bootstrap();
     },
     render: function () {
+        var data = this.props.data;
+        var layout = this.props.layout;
+        var session = this.props.session;
+        var channel = this.props.channel;
+        var seo = this.props.seo;
         return (
-            <Layout data={this.state.response} session={this.state.response.session}>
-                <RouteHandler data={this.state.response.data} session={this.state.response.session}/>
+            <Layout layout={layout} session={session} channel={channel} seo={seo}>
+                <RouteHandler data={data} session={session}/>
             </Layout>
         )
     }
 });
-
-
-
-module.exports = App;

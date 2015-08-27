@@ -3,21 +3,26 @@ var React = require('react');
 var Navbar = require('../partials/navbar.jsx');
 
 
-var Layout = React.createClass({
+module.exports = React.createClass({
     render: function render() {
+        var layout = this.props.layout;
+        var seo = this.props.seo;
+        var channel = this.props.channel;
+        var session = this.props.session;
+
         return (
             <html>
             <head>
                 <meta charSet='utf-8'/>
-                <title>{this.props.data.seo.title}</title>
+                <title>{seo.title}</title>
                 <link rel="stylesheet" href="/css/font-awesome.min.css"/>
                 <link rel="stylesheet" href="/css/bootstrap.css"/>
                 <link rel="stylesheet" href="/css/style.css"/>
             </head>
             <body>
-            {this.props.data.layout !== 'empty' ?
+            {layout !== 'empty' ?
                 <div>
-                    <Navbar channel={this.props.data.channel} session={this.props.session}/>
+                    <Navbar channel={channel} session={session}/>
                 </div>
                 : ''
             }
@@ -29,5 +34,3 @@ var Layout = React.createClass({
         );
     }
 });
-
-module.exports = Layout;

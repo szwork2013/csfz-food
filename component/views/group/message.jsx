@@ -2,7 +2,6 @@ var React = require('react');
 var Router = require('react-router');
 var _ = require('underscore');
 var backend = require('../../utils/backend');
-var ee = require('../../utils/eventemitter');
 var Validator = require('../../utils/react-validator');
 var Constants = require('../../../lib/utils/constants');
 
@@ -18,17 +17,12 @@ module.exports = React.createClass({
             errors: {}
         };
     },
-    componentDidMount: function () {
-        backend.get.groupMessage().then(function (response) {
-            ee.emit('update', response);
-        }.bind(this));
-    },
     handleSubmit: function (e, model) {
         e.preventDefault();
         this.setState({isSubmitting: true});
 
         var group = this.props.data;
-        var groupId = group ? group.groupId : '';
+        var groupId = group ? group._id : '';
 
         backend.post.groupMessage(_.extend({groupId: groupId}, model)).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
@@ -39,6 +33,7 @@ module.exports = React.createClass({
         }.bind(this));
     },
     render: function () {
+
         var btnText = this.state.isSubmitting ? '保存中...' : '保存';
         var group = this.props.data || {};
 
@@ -48,7 +43,7 @@ module.exports = React.createClass({
 
                 <div className="main-content">
                     <div className="page-header">
-                        <h4>基本信息</h4>
+                        <h4>我的餐组</h4>
                     </div>
                     <Validator.Form className="form-horizontal col-lg-4" submit={this.handleSubmit} type="blur">
                         <div className="alert alert-danger"

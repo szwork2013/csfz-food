@@ -8,6 +8,7 @@ var express = require('express'),
     authority = require('./lib/utils/authority'),
     filter = require('./lib/utils/filter'),
     app = express();
+
 var renderer = require('react-engine');
 
 require('node-jsx').install({harmony: true, extension: '.jsx'});
@@ -27,7 +28,7 @@ app.use(methodOverride());
 app.use(cookieParser());
 app.use(session({
     //store: new RedisStore(conf.redis),
-    secret: 'csfz-food-react',
+    secret: 'csfz-food',
     resave: true,
     saveUninitialized: false
 }));

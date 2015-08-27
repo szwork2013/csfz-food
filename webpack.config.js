@@ -12,7 +12,8 @@ module.exports = {
         'reflux': 'Reflux',
         'moment': 'moment',
         'underscore': '_',
-        'wolfy87-eventemitter': 'EventEmitter'
+        'wolfy87-eventemitter': 'EventEmitter',
+        'react-dropzone-component': 'ReactDropzone'
     },
     module: {
         loaders: [
