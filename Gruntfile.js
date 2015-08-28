@@ -15,13 +15,14 @@ module.exports = function (grunt) {
                     'node_modules/react-router/umd/ReactRouter.min.js',
                     'node_modules/reflux/dist/reflux.min.js',
                     'node_modules/wolfy87-eventemitter/EventEmitter.min.js',
-                    'node_modules/react-dropzone-component/dist/dropzone.min.js',
+                    //'node_modules/react-dropzone-component/dist/dropzone.min.js',
 
                     'node_modules/jquery/dist/jquery.min.js',
                     'node_modules/moment/min/moment.min.js',
                     'node_modules/underscore/underscore-min.js',
 
-                    'public/script/bootstrap.min.js'
+                    'public/script/bootstrap.min.js',
+                    'public/script/webuploader-0.1.5/webuploader.html5only.min.js'
                 ],
                 dest: 'public/build/lib/bundle.js'
             }

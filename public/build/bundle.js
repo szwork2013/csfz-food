@@ -1680,51 +1680,126 @@
 	var Validator = __webpack_require__(18);
 	var Constants = __webpack_require__(20);
 
-	//var DropzoneComponent = require('react-dropzone-component');
-
 	var LabelInput = __webpack_require__(27);
 	var Sidebar = __webpack_require__(28);
+
+	var HeadImg = React.createClass({
+	    displayName: 'HeadImg',
+
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            { className: 'head-img' },
+	            React.createElement(
+	                'div',
+	                { className: 'vam' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'vam-out' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'vam-in' },
+	                        React.createElement('img', { src: this.props.src })
+	                    )
+	                )
+	            ),
+	            React.createElement('i', { className: 'icon icon-close upload-delete', onClick: this.props.handleDelete })
+	        );
+	    }
+	});
+
+	var Upload = React.createClass({
+	    displayName: 'Upload',
+
+	    getInitialState: function getInitialState() {
+	        return { error: '' };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        this.createUpload();
+	    },
+	    createUpload: function createUpload() {
+	        WebUploader.create({
+	            server: '/image/upload',
+	            pick: {
+	                id: '#uploadBtn',
+	                multiple: false
+	            },
+	            compress: {
+	                width: 100,
+	                height: 100,
+	                quality: 90,
+	                allowMagnify: false,
+	                crop: false
+	            },
+	            auto: true,
+	            accept: {
+	                title: 'Images',
+	                extensions: 'gif,jpg,jpeg,bmp,png',
+	                mimeTypes: 'image/*'
+	            },
+	            fileVal: 'file',
+	            multiple: false,
+	            duplicate: true
+	        }).on('error', (function (type) {
+	            switch (type) {
+	                case 'Q_TYPE_DENIED':
+	                    this.setState({ error: '图片格式错误' });
+	                    break;
+	                case 'Q_EXCEED_SIZE_LIMIT':
+
+	                    break;
+	            }
+	        }).bind(this)).on('uploadSuccess', (function (file, response) {
+	            this.props.uploadSuccess(file, response);
+	        }).bind(this));
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'span',
+	                { id: 'uploadBtn' },
+	                '上传图片'
+	            ),
+	            this.state.error ? React.createElement(
+	                'div',
+	                { className: 'form-error' },
+	                this.state.error
+	            ) : ''
+	        );
+	    }
+	});
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
 	    mixins: [Router.Navigation],
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            config: {
-	                allowedFiletypes: ['.jpg', '.png', '.gif', '.jpeg', '.bmp'],
-	                showFiletypeIcon: false,
-	                postUrl: '/image/upload'
-	            },
-	            eventHandlers: {
-	                success: function success(data) {
-	                    console.log(data);
-	                }
-	            },
-	            djsConfig: {}
-	        };
-	    },
 	    getInitialState: function getInitialState() {
 	        return {
+	            headImg: this.props.data.headImg || '',
 	            isSubmitting: false,
 	            initUpload: false,
 	            errors: {}
 	        };
 	    },
-	    componentDidMount: function componentDidMount() {
-	        this.setState({ initUpload: true });
-	    },
 	    handleSubmit: function handleSubmit(e, model) {
 	        e.preventDefault();
 	        this.setState({ isSubmitting: true });
 
-	        backend.post.accountMessage(model).then((function (response) {
+	        backend.post.accountMessage(_.extend(model, { headImg: this.state.headImg })).then((function (response) {
 	            if (response.code === Constants.resCode.COMMON) {
 	                this.transitionTo('index');
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
 	            }
 	        }).bind(this));
+	    },
+	    handleDeleteImg: function handleDeleteImg() {
+	        this.setState({ headImg: '' });
+	    },
+	    uploadSuccess: function uploadSuccess(file, response) {
+	        this.setState({ headImg: response.data.imageId });
 	    },
 	    render: function render() {
 	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
@@ -1771,9 +1846,7 @@
 	                        React.createElement(
 	                            'div',
 	                            { className: 'col-lg-10' },
-	                            this.state.initUpload ? React.createElement(window.ReactDropzone, { config: this.props.config,
-	                                eventHandlers: this.props.eventHandlers,
-	                                djsConfig: this.props.djsConfig }) : ''
+	                            this.state.headImg ? React.createElement(HeadImg, { handleDelete: this.handleDeleteImg, src: '/image/' + this.state.headImg }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess })
 	                        )
 	                    ),
 	                    React.createElement(

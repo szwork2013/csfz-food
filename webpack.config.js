@@ -13,7 +13,7 @@ module.exports = {
         'moment': 'moment',
         'underscore': '_',
         'wolfy87-eventemitter': 'EventEmitter',
-        'react-dropzone-component': 'ReactDropzone'
+        'webuploader': 'WebUploader'
     },
     module: {
         loaders: [

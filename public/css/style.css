@@ -1,5 +1,5 @@
 @import "./partials/sidebar.css";
-@import "filepicker.css";
+@import "webuploader.css";
 body {
     margin-top: 50px;
 }
@@ -13,3 +13,53 @@ body {
     color: #ff0039;
     margin-top: 3px;
 }
+
+.vam {
+    display: table;
+    border-collapse: collapse;
+}
+
+.vam-out {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.vam-in {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.head-img{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #f5f5f5;
+    background-color: #f5f5f5;
+}
+
+.head-img .vam{
+    width: 100px;
+    height: 100px;
+}
+
+.upload-delete {
+    position: absolute;
+    right: -8px;
+    top: -8px;
+}
+
+.icon{
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    font-size: 0;
+    background: url(../image/icon.png) no-repeat;
+}
+
+.icon-close {
+    background-position: -80px 0;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
