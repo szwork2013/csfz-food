@@ -38,14 +38,14 @@ module.exports = React.createClass({
         var group = this.props.data || {};
 
         return (
-            <div>
+            <div className="container">
                 <Sidebar channel="group-message"/>
 
-                <div className="main-content">
+                <div className="col-sm-9 main-content">
                     <div className="page-header">
                         <h4>我的餐组</h4>
                     </div>
-                    <Validator.Form className="form-horizontal col-lg-4" submit={this.handleSubmit} type="blur">
+                    <Validator.Form className="form-horizontal public-form" submit={this.handleSubmit} type="blur">
                         <div className="alert alert-danger"
                              style={{display:_.isEmpty(this.state.errors)?'none':'block'}}>
                             {_.values(this.state.errors).map(function (error, index) {
@@ -65,7 +65,7 @@ module.exports = React.createClass({
                             />
 
                         <div className="form-group">
-                            <div className="col-lg-offset-2 col-lg-10">
+                            <div className="col-sm-offset-2 col-sm-10">
                                 <button type="submit" className="btn btn-primary btn-block"
                                         disabled={this.state.isSubmitting}>{btnText}</button>
                             </div>

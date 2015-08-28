@@ -7,7 +7,7 @@ module.exports = React.createClass({
     render: function () {
         var channel = this.props.channel;
         return (
-            <div className="main-sidebar">
+            <div className="col-sm-3 main-sidebar">
                 <div className="header">{this.props.header}</div>
                 <ul className="nav nav-pills nav-stacked">
                     {this.props.channels.map(function (nav, index) {

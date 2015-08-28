@@ -49,6 +49,7 @@
 	var $ = __webpack_require__(3);
 	var Routes = __webpack_require__(4);
 
+	var CLIENT_VARIABLENAME = '__REACT_ENGINE__';
 
 	var _window;
 	var _document;
@@ -60,10 +61,19 @@
 
 	document.addEventListener('DOMContentLoaded', function onLoad() {
 	    Router.run(Routes, Router.HistoryLocation, function onRouterRun(Root, state) {
-	        $.get(state.path, state.query).then(function (data) {
-	            var componentInstance = React.createElement(Root, data);
+	        var props = _window[CLIENT_VARIABLENAME];
+
+	        if (props) {
+	            var componentInstance = React.createElement(Root, props);
 	            React.render(componentInstance, _document);
-	        });
+	            _window[CLIENT_VARIABLENAME] = null;
+	        } else {
+	            $.get(state.path, state.query).then(function (data) {
+	                var componentInstance = React.createElement(Root, data);
+	                React.render(componentInstance, _document);
+	            });
+	        }
+
 	    });
 	});
 
@@ -99,38 +109,27 @@
 
 	var App = __webpack_require__(11);
 	var Index = __webpack_require__(16);
-	var Signin = __webpack_require__(17);
-	var Signup = __webpack_require__(21);
+	var Signin = __webpack_require__(19);
+	var Signup = __webpack_require__(5);
 
-	var Manage = __webpack_require__(23);
-	var ManageStore = __webpack_require__(5);
-	var ManageStoreNew = __webpack_require__(24);
+	var AccountMessage = __webpack_require__(20);
+	var AccountPassword = __webpack_require__(26);
 
-	var AccountMessage = __webpack_require__(26);
-	var AccountPassword = __webpack_require__(31);
+	//var GroupMessage = require('./views/group/message.jsx');
 
-	var Group = __webpack_require__(32);
-	var GroupMessage = __webpack_require__(35);
-
-	var Store = __webpack_require__(36);
+	var ManageGroup = __webpack_require__(27);
+	var ManageStore = __webpack_require__(31);
 
 	var routes = React.createElement(
-	        Route,
-	        { handler: App, path: '/' },
-	        React.createElement(DefaultRoute, { name: 'index', handler: Index }),
-	        React.createElement(Route, { name: 'signin', path: 'signin', handler: Signin }),
-	        React.createElement(Route, { name: 'signup', path: 'signup', handler: Signup }),
-	        React.createElement(Route, { name: 'account-message', path: 'account/message', handler: AccountMessage }),
-	        React.createElement(Route, { name: 'account-password', path: 'account/password', handler: AccountPassword }),
-	        React.createElement(Route, { name: 'group', path: 'group', handler: Group }),
-	        React.createElement(Route, { name: 'group-message', path: 'group/message', handler: GroupMessage }),
-	        React.createElement(Route, { name: 'store', path: 'store', handler: Store }),
-	        React.createElement(
-	                Route,
-	                { name: 'manage', path: 'manage', handler: Manage },
-	                React.createElement(Route, { name: 'manage-store', path: 'store', handler: ManageStore }),
-	                React.createElement(Route, { name: 'manage-store-new', path: 'store/new', handler: ManageStoreNew })
-	        )
+	    Route,
+	    { handler: App, path: '/' },
+	    React.createElement(DefaultRoute, { name: 'index', handler: Index }),
+	    React.createElement(Route, { name: 'signin', path: 'signin', handler: Signin }),
+	    React.createElement(Route, { name: 'signup', path: 'signup', handler: Signup }),
+	    React.createElement(Route, { name: 'account-message', path: 'account/message', handler: AccountMessage }),
+	    React.createElement(Route, { name: 'account-password', path: 'account/password', handler: AccountPassword }),
+	    React.createElement(Route, { name: 'manage-group', path: 'manage/group', handler: ManageGroup }),
+	    React.createElement(Route, { name: 'manage-store', path: 'manage/store', handler: ManageStore })
 	);
 
 	module.exports = routes;
@@ -143,587 +142,16 @@
 
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
-	var $ = __webpack_require__(3);
-	var backend = __webpack_require__(6);
-	var moment = __webpack_require__(7);
-	var ee = __webpack_require__(8);
-
-	var Sidebar = __webpack_require__(10);
-
-	var Store = React.createClass({
-	    displayName: 'Store',
-
-	    componentDidMount: function componentDidMount() {
-	        backend.get.manageStore().then((function (response) {
-	            ee.emit('update', response);
-	        }).bind(this));
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(Sidebar, { channel: 'manage-store' }),
-	            React.createElement(List, { data: this.props.data })
-	        );
-	    }
-	});
-
-	var List = React.createClass({
-	    displayName: 'List',
-
-	    getInitialState: function getInitialState() {
-	        return { list: this.props.data || [] };
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'manage-content' },
-	            React.createElement(
-	                'table',
-	                { className: 'table table-striped table-hover ' },
-	                React.createElement(
-	                    'thead',
-	                    null,
-	                    React.createElement(
-	                        'tr',
-	                        null,
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '#'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '店铺名称'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '主营产品'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '联系方式'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '店铺地址'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '创建人'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '创建时间'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '更新人'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '更新时间'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '操作'
-	                        )
-	                    )
-	                ),
-	                React.createElement(
-	                    'tbody',
-	                    null,
-	                    this.state.list.map(function (item, index) {
-	                        return React.createElement(Item, { data: item, index: index, key: index });
-	                    })
-	                )
-	            )
-	        );
-	    }
-	});
-
-	var Item = React.createClass({
-	    displayName: 'Item',
-
-	    render: function render() {
-	        var index = this.props.index;
-	        var store = this.props.data;
-	        return React.createElement(
-	            'tr',
-	            null,
-	            React.createElement(
-	                'td',
-	                null,
-	                index
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                store.name
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                store.mainProduct
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                store.telephone
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                store.address
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                moment(store.addTime).format('YYYY-MM-DD')
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                store.creater ? store.creater.realname : ''
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                store.updater ? store.updater.realname : ''
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                moment(store.updateTime).format('YYYY-MM-DD')
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                React.createElement(
-	                    'div',
-	                    { className: 'btn-group btn-group-xs' },
-	                    React.createElement(
-	                        'button',
-	                        { type: 'button', className: 'btn btn-primary' },
-	                        '修改'
-	                    ),
-	                    React.createElement(
-	                        'button',
-	                        { type: 'button', className: 'btn btn-danger' },
-	                        '删除'
-	                    ),
-	                    React.createElement(
-	                        'button',
-	                        { type: 'button', className: 'btn btn-success' },
-	                        '管理套餐'
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = Store;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $ = __webpack_require__(3);
-
-	module.exports = {
-	    get: {
-	        signup: function () {
-	            return $.get('/signup');
-	        },
-	        signin: function () {
-	            return $.get('/signin');
-	        },
-	        accountMessage: function () {
-	            return $.get('/account/message');
-	        },
-	        accountPassword: function () {
-	            return $.get('/account/password');
-	        },
-	        group: function () {
-	            return $.get('/group');
-	        },
-	        groupMessage: function () {
-	            return $.get('/group/message');
-	        },
-	        home: function () {
-	            return $.get('/');
-	        }
-	    },
-	    post: {
-	        signup: function (data) {
-	            return $.post('/signup', data);
-	        },
-	        signin: function (data) {
-	            return $.post('/signin', data);
-	        },
-	        accountMessage: function (data) {
-	            return $.post('/account/message', data);
-	        },
-	        accountPassword: function (data) {
-	            return $.post('/account/password', data);
-	        },
-	        group: function () {
-	            return $.get('/group');
-	        },
-	        groupMessage: function (data) {
-	            return $.post('/group/message', data);
-	        }
-	    }
-	};
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = moment;
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var EventEmitter = __webpack_require__(9);
-
-	module.exports = new EventEmitter();
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = EventEmitter;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
+	var _ = __webpack_require__(6);
+	var Input = __webpack_require__(7);
+	var Validator = __webpack_require__(8);
+	var Constants = __webpack_require__(9);
+	var backend = __webpack_require__(10);
 
 	var Link = Router.Link;
 
-	var json = [{
-	    channel: 'manage-store',
-	    text: '店铺管理',
-	    iconClass: 'fa-building',
-	    to: 'manage-store'
-	}];
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    render: function render() {
-	        var channel = this.props.channel;
-	        return React.createElement(
-	            'div',
-	            { className: 'manage-sidebar' },
-	            React.createElement(
-	                'div',
-	                { className: 'header' },
-	                '管理导航'
-	            ),
-	            React.createElement(
-	                'ul',
-	                { className: 'nav nav-pills nav-stacked' },
-	                json.map(function (nav, index) {
-	                    return React.createElement(
-	                        'li',
-	                        { className: nav.channel === channel ? 'active' : '', key: index },
-	                        React.createElement(
-	                            Link,
-	                            { to: nav.to },
-	                            React.createElement('i', { className: 'fa ' + nav.iconClass }),
-	                            nav.text
-	                        )
-	                    );
-	                })
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-	var $ = __webpack_require__(3);
-	var bootstrap = __webpack_require__(12);
-
-	var Layout = __webpack_require__(13);
-
-	var RouteHandler = Router.RouteHandler;
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    componentDidMount: function componentDidMount() {
-	        bootstrap();
-	    },
-	    render: function render() {
-	        var data = this.props.data;
-	        var layout = this.props.layout;
-	        var session = this.props.session;
-	        var channel = this.props.channel;
-	        var seo = this.props.seo;
-	        return React.createElement(
-	            Layout,
-	            { layout: layout, session: session, channel: channel, seo: seo },
-	            React.createElement(RouteHandler, { data: data, session: session })
-	        );
-	    }
-	});
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $ = __webpack_require__(3);
-
-
-	module.exports = function () {
-	    $('.dropdown-toggle').dropdown();
-	};
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-
-	var Navbar = __webpack_require__(14);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    render: function render() {
-	        var layout = this.props.layout;
-	        var seo = this.props.seo;
-	        var channel = this.props.channel;
-	        var session = this.props.session;
-
-	        return React.createElement(
-	            'html',
-	            null,
-	            React.createElement(
-	                'head',
-	                null,
-	                React.createElement('meta', { charSet: 'utf-8' }),
-	                React.createElement(
-	                    'title',
-	                    null,
-	                    seo.title
-	                ),
-	                React.createElement('link', { rel: 'stylesheet', href: '/css/font-awesome.min.css' }),
-	                React.createElement('link', { rel: 'stylesheet', href: '/css/bootstrap.css' }),
-	                React.createElement('link', { rel: 'stylesheet', href: '/css/style.css' })
-	            ),
-	            React.createElement(
-	                'body',
-	                null,
-	                layout !== 'empty' ? React.createElement(
-	                    'div',
-	                    null,
-	                    React.createElement(Navbar, { channel: channel, session: session })
-	                ) : '',
-	                this.props.children,
-	                React.createElement('script', { src: '/build/lib/bundle.js' }),
-	                React.createElement('script', { src: '/build/bundle.js' })
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-
-	var Link = Router.Link;
-
-	var navJson = __webpack_require__(15);
-
-	var NavItem = React.createClass({
-	    displayName: 'NavItem',
-
-	    render: function render() {
-	        var channel = this.props.channel;
-	        var nav = this.props.nav;
-
-	        var active = channel === nav.channel ? 'active' : '';
-
-	        return React.createElement(
-	            'li',
-	            { className: active },
-	            React.createElement(
-	                Link,
-	                { to: nav.to },
-	                nav.text
-	            )
-	        );
-	    }
-	});
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    render: function render() {
-	        var session = this.props.session;
-
-	        return React.createElement(
-	            'nav',
-	            { className: 'navbar navbar-default navbar-fixed-top' },
-	            React.createElement(
-	                'div',
-	                { className: 'container-fluid' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'navbar-header' },
-	                    React.createElement(
-	                        Link,
-	                        { className: 'navbar-brand', to: 'index' },
-	                        'CSFZ-FOOD'
-	                    )
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'collapse navbar-collapse', id: 'bs-example-navbar-collapse-1' },
-	                    React.createElement(
-	                        'ul',
-	                        { className: 'nav navbar-nav' },
-	                        navJson.map((function (nav, index) {
-	                            return React.createElement(NavItem, { nav: nav, key: index, channel: this.props.channel });
-	                        }).bind(this))
-	                    ),
-	                    React.createElement(
-	                        'ul',
-	                        { className: 'nav navbar-nav navbar-right' },
-	                        React.createElement(
-	                            'li',
-	                            { className: 'dropdown' },
-	                            React.createElement(
-	                                'a',
-	                                { href: '#', className: 'dropdown-toggle', 'data-toggle': 'dropdown' },
-	                                session.user.realName,
-	                                ' ',
-	                                React.createElement('span', { className: 'caret' })
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                React.createElement(
-	                                    'li',
-	                                    null,
-	                                    React.createElement(
-	                                        Link,
-	                                        { to: 'account-message' },
-	                                        '账号管理'
-	                                    )
-	                                ),
-	                                React.createElement(
-	                                    'li',
-	                                    null,
-	                                    React.createElement(
-	                                        'a',
-	                                        { href: '/signout' },
-	                                        '注销'
-	                                    )
-	                                )
-	                            )
-	                        )
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	module.exports = [
-		{
-			"channel": "index",
-			"text": "首页",
-			"to": "index"
-		},
-		{
-			"channel": "group",
-			"text": "餐组管理",
-			"to": "group"
-		}
-	]
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var backend = __webpack_require__(6);
-	var ee = __webpack_require__(8);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'main-content' },
-	            React.createElement(
-	                'div',
-	                null,
-	                'd'
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-	var _ = __webpack_require__(19);
-	var Validator = __webpack_require__(18);
-	var constants = __webpack_require__(20);
-	var backend = __webpack_require__(6);
-
-	var Link = Router.Link;
-
-	var Signin = React.createClass({
-	    displayName: 'Signin',
+	var Signup = React.createClass({
+	    displayName: 'Signup',
 
 	    mixins: [Router.Navigation],
 	    getInitialState: function getInitialState() {
@@ -736,8 +164,8 @@
 	        e.preventDefault();
 	        this.setState({ isSubmitting: true });
 
-	        backend.post.signin(model).then((function (response) {
-	            if (response.code === constants.resCode.COMMON) {
+	        backend.post.signup(model).then((function (response) {
+	            if (response.code === Constants.resCode.COMMON) {
 	                this.transitionTo('index');
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
@@ -745,7 +173,7 @@
 	        }).bind(this));
 	    },
 	    render: function render() {
-	        var btnText = this.state.isSubmitting ? '登录中...' : '登录';
+	        var btnText = this.state.isSubmitting ? '注册中...' : '注册';
 	        return React.createElement(
 	            Validator.Form,
 	            { className: 'form-container form-horizontal', submit: this.handleSubmit,
@@ -756,7 +184,7 @@
 	                React.createElement(
 	                    'h3',
 	                    null,
-	                    '用户登录'
+	                    '用户注册'
 	                )
 	            ),
 	            React.createElement(
@@ -770,19 +198,45 @@
 	                    );
 	                })
 	            ),
-	            React.createElement(SigninInput, { name: 'email',
+	            React.createElement(Input, { name: 'email',
 	                placeholder: 'Email',
 	                type: 'text',
 	                key: 'email',
+	                maxLength: '50',
 	                required: 'true',
-	                requiredError: '请输入邮箱'
+	                requiredError: '请输入邮箱',
+	                email: 'true',
+	                emailError: '邮箱格式错误'
 	            }),
-	            React.createElement(SigninInput, { name: 'password',
+	            React.createElement(Input, { name: 'password',
 	                placeholder: 'Password',
 	                type: 'password',
+	                maxLength: '15',
 	                key: 'password',
 	                required: 'true',
-	                requiredError: '请输入密码'
+	                requiredError: '请输入密码',
+	                pattern: Constants.regexp.PASSWORD,
+	                patternError: '密码格式错误'
+	            }),
+	            React.createElement(Input, { name: 'confirmPassword',
+	                placeholder: 'Confirm Password',
+	                type: 'password',
+	                key: 'confirmPassword',
+	                maxLength: '15',
+	                equalTo: 'password',
+	                equalToError: '两次密码输入不一致'
+	            }),
+	            React.createElement(Input, { name: 'realName',
+	                placeholder: 'Chinese Name',
+	                type: 'text',
+	                key: 'realName',
+	                maxLength: '10',
+	                required: 'true',
+	                requiredError: '请输入中文姓名',
+	                pattern: Constants.regexp.REALNAME,
+	                patternError: '中文姓名格式错误',
+	                maxlen: '10',
+	                maxlenError: '10个字符以内'
 	            }),
 	            React.createElement(
 	                'div',
@@ -804,11 +258,11 @@
 	                React.createElement(
 	                    'p',
 	                    { className: 'col-sm-12 text-muted' },
-	                    '还没有账号，马上',
+	                    '已有账号，马上',
 	                    React.createElement(
 	                        Link,
-	                        { to: 'signup' },
-	                        '注册'
+	                        { to: 'signin' },
+	                        '登录'
 	                    )
 	                )
 	            )
@@ -816,8 +270,27 @@
 	    }
 	});
 
-	var SigninInput = React.createClass({
-	    displayName: 'SigninInput',
+	module.exports = Signup;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	module.exports = _;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(1);
+	var Validator = __webpack_require__(8);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
 
 	    mixins: [Validator.Mixin],
 	    handleChange: function handleChange(e) {
@@ -839,14 +312,12 @@
 	            React.createElement(
 	                'div',
 	                { className: 'col-sm-12' },
-	                React.createElement('input', { name: this.props.name,
+	                React.createElement('input', _extends({}, this.props, {
 	                    className: 'form-control',
-	                    type: this.props.type,
-	                    placeholder: this.props.placeholder,
 	                    onChange: this.handleChange,
 	                    onBlur: this.handleBlur,
 	                    onFocus: this.handleFocus
-	                }),
+	                })),
 	                React.createElement(
 	                    'p',
 	                    { className: 'form-error', style: { display: this.isValid() ? 'none' : 'block' } },
@@ -863,10 +334,8 @@
 	    }
 	});
 
-	module.exports = Signin;
-
 /***/ },
-/* 18 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -1071,13 +540,7 @@
 	module.exports = Validator;
 
 /***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	module.exports = _;
-
-/***/ },
-/* 20 */
+/* 9 */
 /***/ function(module, exports) {
 
 	/**
@@ -1103,23 +566,318 @@
 	};
 
 /***/ },
-/* 21 */
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(3);
+
+	module.exports = {
+	    post: {
+	        signup: function (data) {
+	            return $.post('/signup', data);
+	        },
+	        signin: function (data) {
+	            return $.post('/signin', data);
+	        },
+	        accountMessage: function (data) {
+	            return $.post('/account/message', data);
+	        },
+	        accountPassword: function (data) {
+	            return $.post('/account/password', data);
+	        },
+	        group: function () {
+	            return $.get('/group');
+	        },
+	        groupMessage: function (data) {
+	            return $.post('/group/message', data);
+	        },
+	        storeNew: function (data) {
+	            return $.post('/store/new', data);
+	        }
+	    }
+	};
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
-	var _ = __webpack_require__(19);
-	var Input = __webpack_require__(22);
-	var Validator = __webpack_require__(18);
-	var Constants = __webpack_require__(20);
-	var backend = __webpack_require__(6);
+	var $ = __webpack_require__(3);
+	var bootstrap = __webpack_require__(12);
+
+	var Layout = __webpack_require__(13);
+
+	var RouteHandler = Router.RouteHandler;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    componentDidMount: function componentDidMount() {
+	        bootstrap();
+	    },
+	    render: function render() {
+	        var data = this.props.data;
+	        var layout = this.props.layout;
+	        var session = this.props.session;
+	        var channel = this.props.channel;
+	        var seo = this.props.seo;
+	        return React.createElement(
+	            Layout,
+	            { layout: layout, session: session, channel: channel, seo: seo },
+	            React.createElement(RouteHandler, { data: data, session: session })
+	        );
+	    }
+	});
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(3);
+
+
+	module.exports = function () {
+	    $('.dropdown-toggle').dropdown();
+	};
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+
+	var Navbar = __webpack_require__(14);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    render: function render() {
+	        var layout = this.props.layout;
+	        var seo = this.props.seo;
+	        var channel = this.props.channel;
+	        var session = this.props.session;
+
+	        return React.createElement(
+	            'html',
+	            null,
+	            React.createElement(
+	                'head',
+	                null,
+	                React.createElement('meta', { charSet: 'utf-8' }),
+	                React.createElement(
+	                    'title',
+	                    null,
+	                    seo.title
+	                ),
+	                React.createElement('link', { rel: 'stylesheet', href: '/css/font-awesome.min.css' }),
+	                React.createElement('link', { rel: 'stylesheet', href: '/css/bootstrap.css' }),
+	                React.createElement('link', { rel: 'stylesheet', href: '/css/style.css' })
+	            ),
+	            React.createElement(
+	                'body',
+	                null,
+	                layout !== 'empty' ? React.createElement(
+	                    'div',
+	                    null,
+	                    React.createElement(Navbar, { channel: channel, session: session })
+	                ) : '',
+	                this.props.children,
+	                React.createElement('script', { src: '/build/lib/bundle.js' }),
+	                React.createElement('script', { src: '/build/bundle.js' })
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(2);
 
 	var Link = Router.Link;
 
-	var Signup = React.createClass({
-	    displayName: 'Signup',
+	var navJson = __webpack_require__(15);
+
+	var NavItem = React.createClass({
+	    displayName: 'NavItem',
+
+	    render: function render() {
+	        var channel = this.props.channel;
+	        var nav = this.props.nav;
+
+	        var active = channel === nav.channel ? 'active' : '';
+
+	        return React.createElement(
+	            'li',
+	            { className: active },
+	            React.createElement(
+	                Link,
+	                { to: nav.to },
+	                nav.text
+	            )
+	        );
+	    }
+	});
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    render: function render() {
+	        var session = this.props.session;
+
+	        return React.createElement(
+	            'nav',
+	            { className: 'navbar navbar-default navbar-fixed-top' },
+	            React.createElement(
+	                'div',
+	                { className: 'container' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'navbar-header' },
+	                    React.createElement(
+	                        Link,
+	                        { className: 'navbar-brand', to: 'index' },
+	                        'CSFZ-FOOD'
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { className: 'collapse navbar-collapse', id: 'bs-example-navbar-collapse-1' },
+	                    React.createElement(
+	                        'ul',
+	                        { className: 'nav navbar-nav' },
+	                        navJson.map((function (nav, index) {
+	                            return React.createElement(NavItem, { nav: nav, key: index, channel: this.props.channel });
+	                        }).bind(this))
+	                    ),
+	                    React.createElement(
+	                        'ul',
+	                        { className: 'nav navbar-nav navbar-right' },
+	                        React.createElement(
+	                            'li',
+	                            { className: 'dropdown' },
+	                            React.createElement(
+	                                'a',
+	                                { href: '#', className: 'dropdown-toggle', 'data-toggle': 'dropdown' },
+	                                session.user.realName,
+	                                ' ',
+	                                React.createElement('span', { className: 'caret' })
+	                            ),
+	                            React.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                React.createElement(
+	                                    'li',
+	                                    null,
+	                                    React.createElement(
+	                                        Link,
+	                                        { to: 'account-message' },
+	                                        '账号管理'
+	                                    )
+	                                ),
+	                                React.createElement(
+	                                    'li',
+	                                    null,
+	                                    React.createElement(
+	                                        'a',
+	                                        { href: '/signout' },
+	                                        '注销'
+	                                    )
+	                                )
+	                            )
+	                        )
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = [
+		{
+			"channel": "index",
+			"text": "首页",
+			"to": "index"
+		},
+		{
+			"channel": "manage",
+			"text": "管理",
+			"to": "manage-group"
+		}
+	]
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var backend = __webpack_require__(10);
+	var ee = __webpack_require__(17);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            { className: 'main-content' },
+	            React.createElement(
+	                'div',
+	                null,
+	                'd'
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var EventEmitter = __webpack_require__(18);
+
+	module.exports = new EventEmitter();
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = EventEmitter;
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(2);
+	var _ = __webpack_require__(6);
+	var Validator = __webpack_require__(8);
+	var constants = __webpack_require__(9);
+	var backend = __webpack_require__(10);
+
+	var Link = Router.Link;
+
+	var Signin = React.createClass({
+	    displayName: 'Signin',
 
 	    mixins: [Router.Navigation],
 	    getInitialState: function getInitialState() {
@@ -1132,8 +890,8 @@
 	        e.preventDefault();
 	        this.setState({ isSubmitting: true });
 
-	        backend.post.signup(model).then((function (response) {
-	            if (response.code === Constants.resCode.COMMON) {
+	        backend.post.signin(model).then((function (response) {
+	            if (response.code === constants.resCode.COMMON) {
 	                this.transitionTo('index');
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
@@ -1141,7 +899,7 @@
 	        }).bind(this));
 	    },
 	    render: function render() {
-	        var btnText = this.state.isSubmitting ? '注册中...' : '注册';
+	        var btnText = this.state.isSubmitting ? '登录中...' : '登录';
 	        return React.createElement(
 	            Validator.Form,
 	            { className: 'form-container form-horizontal', submit: this.handleSubmit,
@@ -1152,7 +910,7 @@
 	                React.createElement(
 	                    'h3',
 	                    null,
-	                    '用户注册'
+	                    '用户登录'
 	                )
 	            ),
 	            React.createElement(
@@ -1166,45 +924,19 @@
 	                    );
 	                })
 	            ),
-	            React.createElement(Input, { name: 'email',
+	            React.createElement(SigninInput, { name: 'email',
 	                placeholder: 'Email',
 	                type: 'text',
 	                key: 'email',
-	                maxLength: '50',
 	                required: 'true',
-	                requiredError: '请输入邮箱',
-	                email: 'true',
-	                emailError: '邮箱格式错误'
+	                requiredError: '请输入邮箱'
 	            }),
-	            React.createElement(Input, { name: 'password',
+	            React.createElement(SigninInput, { name: 'password',
 	                placeholder: 'Password',
 	                type: 'password',
-	                maxLength: '15',
 	                key: 'password',
 	                required: 'true',
-	                requiredError: '请输入密码',
-	                pattern: Constants.regexp.PASSWORD,
-	                patternError: '密码格式错误'
-	            }),
-	            React.createElement(Input, { name: 'confirmPassword',
-	                placeholder: 'Confirm Password',
-	                type: 'password',
-	                key: 'confirmPassword',
-	                maxLength: '15',
-	                equalTo: 'password',
-	                equalToError: '两次密码输入不一致'
-	            }),
-	            React.createElement(Input, { name: 'realName',
-	                placeholder: 'Chinese Name',
-	                type: 'text',
-	                key: 'realName',
-	                maxLength: '10',
-	                required: 'true',
-	                requiredError: '请输入中文姓名',
-	                pattern: Constants.regexp.REALNAME,
-	                patternError: '中文姓名格式错误',
-	                maxlen: '10',
-	                maxlenError: '10个字符以内'
+	                requiredError: '请输入密码'
 	            }),
 	            React.createElement(
 	                'div',
@@ -1226,11 +958,11 @@
 	                React.createElement(
 	                    'p',
 	                    { className: 'col-sm-12 text-muted' },
-	                    '已有账号，马上',
+	                    '还没有账号，马上',
 	                    React.createElement(
 	                        Link,
-	                        { to: 'signin' },
-	                        '登录'
+	                        { to: 'signup' },
+	                        '注册'
 	                    )
 	                )
 	            )
@@ -1238,21 +970,8 @@
 	    }
 	});
 
-	module.exports = Signup;
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(1);
-	var Validator = __webpack_require__(18);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
+	var SigninInput = React.createClass({
+	    displayName: 'SigninInput',
 
 	    mixins: [Validator.Mixin],
 	    handleChange: function handleChange(e) {
@@ -1274,235 +993,7 @@
 	            React.createElement(
 	                'div',
 	                { className: 'col-sm-12' },
-	                React.createElement('input', _extends({}, this.props, {
-	                    className: 'form-control',
-	                    onChange: this.handleChange,
-	                    onBlur: this.handleBlur,
-	                    onFocus: this.handleFocus
-	                })),
-	                React.createElement(
-	                    'p',
-	                    { className: 'form-error', style: { display: this.isValid() ? 'none' : 'block' } },
-	                    React.createElement('i', { className: 'fa fa-warning' }),
-	                    React.createElement(
-	                        'span',
-	                        null,
-	                        ' ',
-	                        errorMsg
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-
-	var RouteHandler = Router.RouteHandler;
-
-	var Manage = React.createClass({
-	    displayName: 'Manage',
-
-	    render: function render() {
-	        return React.createElement(RouteHandler, this.props);
-	    }
-	});
-
-	module.exports = Manage;
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-	var $ = __webpack_require__(3);
-	var backend = __webpack_require__(6);
-	var constants = __webpack_require__(20);
-	var Validator = __webpack_require__(18);
-	var Dropzone = __webpack_require__(25);
-
-	var Sidebar = __webpack_require__(10);
-
-	var StoreNew = React.createClass({
-	    displayName: 'StoreNew',
-
-	    componentDidMount: function componentDidMount() {
-	        backend.get.manageStoreNew().then((function (response) {
-	            ee.emit('update', response);
-	        }).bind(this));
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(Sidebar, { channel: 'manage-store' }),
-	            React.createElement(Form, null)
-	        );
-	    }
-	});
-
-	var Form = React.createClass({
-	    displayName: 'Form',
-
-	    mixins: [Router.Navigation],
-	    getInitialState: function getInitialState() {
-	        return {
-	            isSubmitting: false,
-	            errors: []
-	        };
-	    },
-	    handleSubmit: function handleSubmit(e, model) {
-	        e.preventDefault();
-	        this.setState({ isSubmitting: true });
-
-	        backend.post.manageStoreNew(model).then((function (response) {
-	            if (response.code === constants.resCode.COMMON) {
-	                this.transitionTo('manage-store');
-	            } else {
-	                this.setState({ errors: response.errors, isSubmitting: false });
-	            }
-	        }).bind(this));
-	    },
-	    handleUpload: function handleUpload() {},
-	    render: function render() {
-	        var btnText = this.state.isSubmitting ? '新增中...' : '新增';
-
-	        return React.createElement(
-	            'div',
-	            { className: 'manage-content' },
-	            React.createElement(
-	                Validator.Form,
-	                { className: 'form-horizontal store-form', submit: this.handleSubmit,
-	                    type: 'blur' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'page-header' },
-	                    React.createElement(
-	                        'h3',
-	                        null,
-	                        '新增店铺'
-	                    )
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'alert alert-danger', style: { display: this.state.errors.length > 0 ? 'block' : 'none' } },
-	                    this.state.errors.map(function (error, index) {
-	                        return React.createElement(
-	                            'p',
-	                            { key: index },
-	                            error
-	                        );
-	                    })
-	                ),
-	                React.createElement(Upload, { upload: this.props.handleUpload }),
-	                React.createElement(Input, { name: 'name',
-	                    type: 'text',
-	                    key: 'name',
-	                    label: '店铺名称',
-	                    maxLength: '50',
-	                    required: 'true',
-	                    requiredError: '请输入店铺名称'
-	                }),
-	                React.createElement(Input, { name: 'mainProduct',
-	                    type: 'text',
-	                    label: '主营产品',
-	                    key: 'mainProduct',
-	                    maxLength: '50',
-	                    required: 'true',
-	                    requiredError: '请输入主营产品'
-	                }),
-	                React.createElement(Input, { name: 'telephone',
-	                    type: 'text',
-	                    label: '联系方式',
-	                    key: 'telephone',
-	                    maxLength: '20',
-	                    required: 'true',
-	                    requiredError: '请输入联系方式',
-	                    pattern: constants.regexp.TELEPHONE,
-	                    patternError: '联系方式格式错误'
-	                }),
-	                React.createElement(Input, { name: 'address',
-	                    type: 'text',
-	                    label: '店铺地址',
-	                    key: 'address',
-	                    maxLength: '50',
-	                    required: 'true',
-	                    requiredError: '请输入店铺地址'
-	                }),
-	                React.createElement(Input, { name: 'description',
-	                    type: 'text',
-	                    label: '店铺描述',
-	                    cate: 'textarea',
-	                    key: 'description',
-	                    maxLength: '200'
-	                }),
-	                React.createElement(
-	                    'div',
-	                    { className: 'form-group' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'col-lg-offset-2 col-lg-4' },
-	                        React.createElement(
-	                            'button',
-	                            { type: 'submit', className: 'btn btn-primary btn-block',
-	                                disabled: this.state.isSubmitting },
-	                            btnText
-	                        )
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-	var Input = React.createClass({
-	    displayName: 'Input',
-
-	    mixins: [Validator.Mixin],
-	    handleChange: function handleChange(e) {
-	        this.setValue(e.currentTarget.value);
-	    },
-	    handleBlur: function handleBlur() {
-	        this.valid();
-	    },
-	    handleFocus: function handleFocus() {
-	        this.setValid();
-	    },
-	    render: function render() {
-	        var errorMsg = this.isValid() ? '' : this.getErrorMsg();
-
-	        var classes = 'form-group' + (this.isInvalid() ? ' has-error' : '');
-	        return React.createElement(
-	            'div',
-	            { className: classes },
-	            React.createElement(
-	                'label',
-	                { className: 'col-lg-2 control-label' },
-	                this.props.label
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'col-lg-10' },
-	                this.props.cate === 'textarea' ? React.createElement('textarea', { name: this.props.name,
-	                    className: 'form-control',
-	                    type: this.props.type,
-	                    placeholder: this.props.placeholder,
-	                    onChange: this.handleChange,
-	                    onBlur: this.handleBlur,
-	                    onFocus: this.handleFocus,
-	                    maxLength: this.props.maxLength,
-	                    rows: '4'
-	                }) : React.createElement('input', { name: this.props.name,
+	                React.createElement('input', { name: this.props.name,
 	                    className: 'form-control',
 	                    type: this.props.type,
 	                    placeholder: this.props.placeholder,
@@ -1526,147 +1017,10 @@
 	    }
 	});
 
-	var Upload = React.createClass({
-	    displayName: 'Upload',
-
-	    onDrop: function onDrop(files) {
-	        console.log('Received files: ', files);
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'form-group' },
-	            React.createElement(
-	                'label',
-	                { className: 'col-lg-2 control-label' },
-	                '店铺图片'
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'col-lg-10' },
-	                React.createElement(
-	                    Dropzone,
-	                    { onDrop: this.onDrop, multiple: false,
-	                        style: { width: 152, height: 152, border: '1px solid #cccccc' } },
-	                    React.createElement('img', { src: '/image/noimg.jpg', width: '150' })
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = StoreNew;
+	module.exports = Signin;
 
 /***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var Dropzone = React.createClass({
-	    getDefaultProps: function() {
-	        return {
-	            supportClick: true,
-	            multiple: true
-	        };
-	    },
-
-	    getInitialState: function() {
-	        return {
-	            isDragActive: false
-	        };
-	    },
-
-	    propTypes: {
-	        onDrop: React.PropTypes.func.isRequired,
-	        size: React.PropTypes.number,
-	        style: React.PropTypes.object,
-	        supportClick: React.PropTypes.bool,
-	        accept: React.PropTypes.string,
-	        multiple: React.PropTypes.bool
-	    },
-
-	    onDragLeave: function(e) {
-	        this.setState({
-	            isDragActive: false
-	        });
-	    },
-
-	    onDragOver: function(e) {
-	        e.preventDefault();
-	        e.dataTransfer.dropEffect = 'copy';
-
-	        this.setState({
-	            isDragActive: true
-	        });
-	    },
-
-	    onDrop: function(e) {
-	        e.preventDefault();
-
-	        this.setState({
-	            isDragActive: false
-	        });
-
-	        var files;
-	        if (e.dataTransfer) {
-	            files = e.dataTransfer.files;
-	        } else if (e.target) {
-	            files = e.target.files;
-	        }
-
-	        var maxFiles = (this.props.multiple) ? files.length : 1;
-	        for (var i = 0; i < maxFiles; i++) {
-	            files[i].preview = URL.createObjectURL(files[i]);
-	        }
-
-	        if (this.props.onDrop) {
-	            files = Array.prototype.slice.call(files, 0, maxFiles);
-	            this.props.onDrop(files, e);
-	        }
-	    },
-
-	    onClick: function () {
-	        if (this.props.supportClick === true) {
-	            this.open();
-	        }
-	    },
-
-	    open: function() {
-	        var fileInput = React.findDOMNode(this.refs.fileInput);
-	        fileInput.value = null;
-	        fileInput.click();
-	    },
-
-	    render: function() {
-
-	        var className = this.props.className || 'dropzone';
-	        if (this.state.isDragActive) {
-	            className += ' active';
-	        }
-
-	        var style = this.props.style || {
-	                width: this.props.size || 100,
-	                height: this.props.size || 100,
-	                borderStyle: this.state.isDragActive ? 'solid' : 'dashed'
-	            };
-
-
-	        return (
-	            React.createElement('div', {className: className, style: style, onClick: this.onClick, onDragLeave: this.onDragLeave, onDragOver: this.onDragOver, onDrop: this.onDrop},
-	                React.createElement('input', {style: {display: 'none'}, type: 'file', multiple: this.props.multiple, ref: 'fileInput', onChange: this.onDrop, accept: this.props.accept}),
-	                this.props.children
-	            )
-	        );
-	    }
-
-	});
-
-	module.exports = Dropzone;
-
-
-/***/ },
-/* 26 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1674,17 +1028,18 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 	var $ = __webpack_require__(3);
-	var _ = __webpack_require__(19);
+	var _ = __webpack_require__(6);
 
-	var backend = __webpack_require__(6);
-	var Validator = __webpack_require__(18);
-	var Constants = __webpack_require__(20);
+	var backend = __webpack_require__(10);
+	var Validator = __webpack_require__(8);
+	var Constants = __webpack_require__(9);
 
-	var LabelInput = __webpack_require__(27);
-	var Sidebar = __webpack_require__(28);
+	var LabelInput = __webpack_require__(21);
+	var Sidebar = __webpack_require__(22);
+	var Upload = __webpack_require__(25);
 
-	var HeadImg = React.createClass({
-	    displayName: 'HeadImg',
+	var Image = React.createClass({
+	    displayName: 'Image',
 
 	    render: function render() {
 	        return React.createElement(
@@ -1708,76 +1063,13 @@
 	    }
 	});
 
-	var Upload = React.createClass({
-	    displayName: 'Upload',
-
-	    getInitialState: function getInitialState() {
-	        return { error: '' };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        this.createUpload();
-	    },
-	    createUpload: function createUpload() {
-	        WebUploader.create({
-	            server: '/image/upload',
-	            pick: {
-	                id: '#uploadBtn',
-	                multiple: false
-	            },
-	            compress: {
-	                width: 100,
-	                height: 100,
-	                quality: 90,
-	                allowMagnify: false,
-	                crop: false
-	            },
-	            auto: true,
-	            accept: {
-	                title: 'Images',
-	                extensions: 'gif,jpg,jpeg,bmp,png',
-	                mimeTypes: 'image/*'
-	            },
-	            fileVal: 'file',
-	            multiple: false,
-	            duplicate: true
-	        }).on('error', (function (type) {
-	            switch (type) {
-	                case 'Q_TYPE_DENIED':
-	                    this.setState({ error: '图片格式错误' });
-	                    break;
-	                case 'Q_EXCEED_SIZE_LIMIT':
-
-	                    break;
-	            }
-	        }).bind(this)).on('uploadSuccess', (function (file, response) {
-	            this.props.uploadSuccess(file, response);
-	        }).bind(this));
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'span',
-	                { id: 'uploadBtn' },
-	                '上传图片'
-	            ),
-	            this.state.error ? React.createElement(
-	                'div',
-	                { className: 'form-error' },
-	                this.state.error
-	            ) : ''
-	        );
-	    }
-	});
-
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
 	    mixins: [Router.Navigation],
 	    getInitialState: function getInitialState() {
 	        return {
-	            headImg: this.props.data.headImg || '',
+	            image: this.props.data.image ? { id: this.props.data.image } : null,
 	            isSubmitting: false,
 	            initUpload: false,
 	            errors: {}
@@ -1787,7 +1079,9 @@
 	        e.preventDefault();
 	        this.setState({ isSubmitting: true });
 
-	        backend.post.accountMessage(_.extend(model, { headImg: this.state.headImg })).then((function (response) {
+	        _.extend(model, { image: this.state.image && this.state.image.id || '' });
+
+	        backend.post.accountMessage(model).then((function (response) {
 	            if (response.code === Constants.resCode.COMMON) {
 	                this.transitionTo('index');
 	            } else {
@@ -1796,21 +1090,21 @@
 	        }).bind(this));
 	    },
 	    handleDeleteImg: function handleDeleteImg() {
-	        this.setState({ headImg: '' });
+	        this.setState({ image: null });
 	    },
 	    uploadSuccess: function uploadSuccess(file, response) {
-	        this.setState({ headImg: response.data.imageId });
+	        this.setState({ image: response.data });
 	    },
 	    render: function render() {
 	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
 	        var user = this.props.data || {};
 	        return React.createElement(
 	            'div',
-	            null,
+	            { className: 'container' },
 	            React.createElement(Sidebar, { channel: 'account-message' }),
 	            React.createElement(
 	                'div',
-	                { className: 'main-content' },
+	                { className: 'col-sm-9 main-content' },
 	                React.createElement(
 	                    'div',
 	                    { className: 'page-header' },
@@ -1822,7 +1116,7 @@
 	                ),
 	                React.createElement(
 	                    Validator.Form,
-	                    { className: 'form-horizontal col-lg-4', submit: this.handleSubmit, type: 'blur' },
+	                    { className: 'form-horizontal public-form', submit: this.handleSubmit, type: 'blur' },
 	                    React.createElement(
 	                        'div',
 	                        { className: 'alert alert-danger',
@@ -1840,13 +1134,14 @@
 	                        { className: 'form-group' },
 	                        React.createElement(
 	                            'label',
-	                            { className: 'col-lg-2 control-label' },
+	                            { className: 'col-sm-2 control-label' },
 	                            '头像'
 	                        ),
 	                        React.createElement(
 	                            'div',
-	                            { className: 'col-lg-10' },
-	                            this.state.headImg ? React.createElement(HeadImg, { handleDelete: this.handleDeleteImg, src: '/image/' + this.state.headImg }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess })
+	                            { className: 'col-sm-10' },
+	                            this.state.image ? React.createElement(Image, { handleDelete: this.handleDeleteImg,
+	                                src: '/image/' + this.state.image.id }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess })
 	                        )
 	                    ),
 	                    React.createElement(
@@ -1854,12 +1149,12 @@
 	                        { className: 'form-group' },
 	                        React.createElement(
 	                            'label',
-	                            { className: 'col-lg-2 control-label' },
+	                            { className: 'col-sm-2 control-label' },
 	                            '邮箱'
 	                        ),
 	                        React.createElement(
 	                            'div',
-	                            { className: 'col-lg-10' },
+	                            { className: 'col-sm-10' },
 	                            React.createElement('input', { type: 'text', className: 'form-control', value: user.email, disabled: true })
 	                        )
 	                    ),
@@ -1899,7 +1194,7 @@
 	                        { className: 'form-group' },
 	                        React.createElement(
 	                            'div',
-	                            { className: 'col-lg-offset-2 col-lg-10' },
+	                            { className: 'col-sm-offset-2 col-sm-10' },
 	                            React.createElement(
 	                                'button',
 	                                { type: 'submit', className: 'btn btn-primary btn-block',
@@ -1915,7 +1210,7 @@
 	});
 
 /***/ },
-/* 27 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1923,7 +1218,7 @@
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = __webpack_require__(1);
-	var Validator = __webpack_require__(18);
+	var Validator = __webpack_require__(8);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1948,12 +1243,12 @@
 	            { className: classes },
 	            React.createElement(
 	                'label',
-	                { className: 'col-lg-2 control-label' },
+	                { className: 'col-sm-2 control-label' },
 	                this.props.label
 	            ),
 	            React.createElement(
 	                'div',
-	                { className: 'col-lg-10' },
+	                { className: 'col-sm-10' },
 	                React.createElement('input', _extends({}, this.props, {
 	                    className: 'form-control',
 	                    onChange: this.handleChange,
@@ -1977,7 +1272,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1985,8 +1280,8 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 
-	var Sidebar = __webpack_require__(29);
-	var SidebarJSON = __webpack_require__(30);
+	var Sidebar = __webpack_require__(23);
+	var SidebarJSON = __webpack_require__(24);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1997,7 +1292,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2014,7 +1309,7 @@
 	        var channel = this.props.channel;
 	        return React.createElement(
 	            'div',
-	            { className: 'main-sidebar' },
+	            { className: 'col-sm-3 main-sidebar' },
 	            React.createElement(
 	                'div',
 	                { className: 'header' },
@@ -2041,7 +1336,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -2060,7 +1355,85 @@
 	]
 
 /***/ },
-/* 31 */
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var _ = __webpack_require__(6);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    getInitialState: function getInitialState() {
+	        return { error: '' };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        this.createUpload();
+	    },
+	    createUpload: function createUpload() {
+	        WebUploader.create(_.extend({
+	            server: '/image/upload',
+	            pick: {
+	                id: '#uploadBtn',
+	                multiple: false
+	            },
+	            compress: {
+	                width: 100,
+	                height: 100,
+	                quality: 90,
+	                allowMagnify: false,
+	                crop: false
+	            },
+	            auto: true,
+	            accept: {
+	                title: 'Images',
+	                extensions: 'gif,jpg,jpeg,bmp,png',
+	                mimeTypes: 'image/*'
+	            },
+	            fileVal: 'file',
+	            multiple: false,
+	            duplicate: true
+	        }, this.props.config)).on('error', (function (type) {
+	            switch (type) {
+	                case 'Q_TYPE_DENIED':
+	                    this.setState({ error: '文件格式错误' });
+	                    break;
+	                case 'Q_EXCEED_SIZE_LIMIT':
+
+	                    break;
+	            }
+	        }).bind(this)).on('uploadSuccess', (function (file, response) {
+	            this.props.uploadSuccess(file, response);
+	        }).bind(this));
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'span',
+	                { id: 'uploadBtn' },
+	                '上传图片'
+	            ),
+	            this.state.error ? React.createElement(
+	                'div',
+	                { className: 'form-error' },
+	                React.createElement('i', { className: 'fa fa-warning' }),
+	                React.createElement(
+	                    'span',
+	                    null,
+	                    ' ',
+	                    this.state.error
+	                )
+	            ) : ''
+	        );
+	    }
+	});
+
+/***/ },
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2068,13 +1441,13 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 	var $ = __webpack_require__(3);
-	var _ = __webpack_require__(19);
-	var backend = __webpack_require__(6);
-	var Validator = __webpack_require__(18);
-	var Constants = __webpack_require__(20);
+	var _ = __webpack_require__(6);
+	var backend = __webpack_require__(10);
+	var Validator = __webpack_require__(8);
+	var Constants = __webpack_require__(9);
 
-	var LabelInput = __webpack_require__(27);
-	var Sidebar = __webpack_require__(28);
+	var LabelInput = __webpack_require__(21);
+	var Sidebar = __webpack_require__(22);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -2102,11 +1475,11 @@
 	        var btnText = this.state.isSubmitting ? '修改中...' : '修改';
 	        return React.createElement(
 	            'div',
-	            null,
+	            { className: 'container' },
 	            React.createElement(Sidebar, { channel: 'account-password' }),
 	            React.createElement(
 	                'div',
-	                { className: 'main-content' },
+	                { className: 'col-sm-9 main-content' },
 	                React.createElement(
 	                    'div',
 	                    { className: 'page-header' },
@@ -2118,7 +1491,7 @@
 	                ),
 	                React.createElement(
 	                    Validator.Form,
-	                    { className: 'form-horizontal col-lg-4', submit: this.handleSubmit, type: 'blur' },
+	                    { className: 'form-horizontal public-form', submit: this.handleSubmit, type: 'blur' },
 	                    React.createElement(
 	                        'div',
 	                        { className: 'alert alert-danger',
@@ -2164,7 +1537,7 @@
 	                        { className: 'form-group' },
 	                        React.createElement(
 	                            'div',
-	                            { className: 'col-lg-offset-2 col-lg-10' },
+	                            { className: 'col-sm-offset-2 col-sm-10' },
 	                            React.createElement(
 	                                'button',
 	                                { type: 'submit', className: 'btn btn-primary btn-block',
@@ -2180,18 +1553,18 @@
 	});
 
 /***/ },
-/* 32 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
-	var moment = __webpack_require__(7);
-	var _ = __webpack_require__(19);
-	var backend = __webpack_require__(6);
+	var moment = __webpack_require__(28);
+	var _ = __webpack_require__(6);
+	var backend = __webpack_require__(10);
 
-	var Sidebar = __webpack_require__(33);
+	var Sidebar = __webpack_require__(29);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -2199,8 +1572,8 @@
 	    render: function render() {
 	        return React.createElement(
 	            'div',
-	            null,
-	            React.createElement(Sidebar, { channel: 'group' }),
+	            { className: 'container' },
+	            React.createElement(Sidebar, { channel: 'manage-group' }),
 	            React.createElement(List, { data: this.props.data, user: this.props.session.user })
 	        );
 	    }
@@ -2215,14 +1588,36 @@
 	    render: function render() {
 	        return React.createElement(
 	            'div',
-	            { className: 'main-content' },
+	            { className: 'col-sm-9 main-content' },
 	            React.createElement(
-	                'div',
-	                { className: 'page-header' },
+	                'ul',
+	                { className: 'nav nav-tabs' },
 	                React.createElement(
-	                    'h4',
-	                    null,
-	                    '所有餐组'
+	                    'li',
+	                    { role: 'presentation', className: 'active' },
+	                    React.createElement(
+	                        'a',
+	                        { href: '#' },
+	                        '我的餐组'
+	                    )
+	                ),
+	                React.createElement(
+	                    'li',
+	                    { role: 'presentation' },
+	                    React.createElement(
+	                        'a',
+	                        { href: '#' },
+	                        '我的申请'
+	                    )
+	                ),
+	                React.createElement(
+	                    'li',
+	                    { role: 'presentation' },
+	                    React.createElement(
+	                        'a',
+	                        { href: '#' },
+	                        '管理申请'
+	                    )
 	                )
 	            ),
 	            React.createElement(
@@ -2323,7 +1718,13 @@
 	});
 
 /***/ },
-/* 33 */
+/* 28 */
+/***/ function(module, exports) {
+
+	module.exports = moment;
+
+/***/ },
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2331,195 +1732,131 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 
-	var Sidebar = __webpack_require__(29);
-	var SidebarJSON = __webpack_require__(34);
+	var Sidebar = __webpack_require__(23);
+	var SidebarJSON = __webpack_require__(30);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
 	    render: function render() {
-	        return React.createElement(Sidebar, { channel: this.props.channel, channels: SidebarJSON, header: '餐组管理' });
+	        return React.createElement(Sidebar, { channel: this.props.channel, channels: SidebarJSON, header: '内容管理' });
 	    }
 	});
 
 /***/ },
-/* 34 */
+/* 30 */
 /***/ function(module, exports) {
 
 	module.exports = [
 		{
-			"channel": "group",
-			"text": "所有餐组",
+			"channel": "manage-group",
+			"text": "餐组管理",
 			"iconClass": "fa-building",
-			"to": "group"
+			"to": "manage-group"
 		},
 		{
-			"channel": "group-message",
-			"text": "我的餐组",
+			"channel": "manage-store",
+			"text": "店铺管理",
 			"iconClass": "fa-building",
-			"to": "group-message"
+			"to": "manage-store"
 		}
 	]
 
 /***/ },
-/* 35 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
-	var _ = __webpack_require__(19);
-	var backend = __webpack_require__(6);
-	var Validator = __webpack_require__(18);
-	var Constants = __webpack_require__(20);
+	var moment = __webpack_require__(28);
+	var backend = __webpack_require__(10);
 
-	var LabelInput = __webpack_require__(27);
-	var Sidebar = __webpack_require__(33);
+	var Sidebar = __webpack_require__(29);
+
+	var Link = Router.Link;
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    mixins: [Router.Navigation],
-	    getInitialState: function getInitialState() {
-	        return {
-	            isSubmitting: false,
-	            errors: {}
-	        };
-	    },
-	    handleSubmit: function handleSubmit(e, model) {
-	        e.preventDefault();
-	        this.setState({ isSubmitting: true });
-
-	        var group = this.props.data;
-	        var groupId = group ? group._id : '';
-
-	        backend.post.groupMessage(_.extend({ groupId: groupId }, model)).then((function (response) {
-	            if (response.code === Constants.resCode.COMMON) {
-	                this.transitionTo('index');
-	            } else {
-	                this.setState({ errors: response.errors, isSubmitting: false });
-	            }
-	        }).bind(this));
-	    },
 	    render: function render() {
-
-	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
-	        var group = this.props.data || {};
-
 	        return React.createElement(
 	            'div',
-	            null,
-	            React.createElement(Sidebar, { channel: 'group-message' }),
+	            { className: 'container' },
+	            React.createElement(Sidebar, { channel: 'manage-store' }),
 	            React.createElement(
 	                'div',
-	                { className: 'main-content' },
+	                { className: 'main-content col-sm-9' },
 	                React.createElement(
 	                    'div',
 	                    { className: 'page-header' },
 	                    React.createElement(
 	                        'h4',
 	                        null,
-	                        '我的餐组'
+	                        '所有店铺'
 	                    )
 	                ),
 	                React.createElement(
-	                    Validator.Form,
-	                    { className: 'form-horizontal col-lg-4', submit: this.handleSubmit, type: 'blur' },
+	                    'table',
+	                    { className: 'table table-striped table-hover ' },
 	                    React.createElement(
-	                        'div',
-	                        { className: 'alert alert-danger',
-	                            style: { display: _.isEmpty(this.state.errors) ? 'none' : 'block' } },
-	                        _.values(this.state.errors).map(function (error, index) {
-	                            return React.createElement(
-	                                'p',
-	                                { key: index },
-	                                error
-	                            );
-	                        })
-	                    ),
-	                    React.createElement(LabelInput, { name: 'groupName',
-	                        type: 'text',
-	                        key: 'groupName',
-	                        maxLength: '20',
-	                        label: '餐组名称',
-	                        defaultValue: group.groupName,
-	                        required: 'true',
-	                        requiredError: '请输入餐组名称',
-	                        maxlen: '20',
-	                        maxlenError: '20个字符以内'
-	                    }),
-	                    React.createElement(
-	                        'div',
-	                        { className: 'form-group' },
+	                        'thead',
+	                        null,
 	                        React.createElement(
-	                            'div',
-	                            { className: 'col-lg-offset-2 col-lg-10' },
+	                            'tr',
+	                            null,
 	                            React.createElement(
-	                                'button',
-	                                { type: 'submit', className: 'btn btn-primary btn-block',
-	                                    disabled: this.state.isSubmitting },
-	                                btnText
+	                                'th',
+	                                null,
+	                                '#'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '店铺名称'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '所属餐组'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '创建人'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '创建时间'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '更新人'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '更新时间'
+	                            ),
+	                            React.createElement(
+	                                'th',
+	                                null,
+	                                '操作'
 	                            )
 	                        )
+	                    ),
+	                    React.createElement(
+	                        'tbody',
+	                        null,
+	                        this.props.data.map((function (item, index) {
+	                            return React.createElement(Item, { data: item, index: index, key: index });
+	                        }).bind(this))
 	                    )
 	                )
 	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-	var $ = __webpack_require__(3);
-	var backend = __webpack_require__(6);
-	var ee = __webpack_require__(8);
-
-	var Link = Router.Link;
-
-	var Store = React.createClass({
-	    displayName: 'Store',
-
-	    componentDidMount: function componentDidMount() {
-	        backend.get.storeList().then((function (response) {
-	            ee.emit('update', response);
-	        }).bind(this));
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'container' },
-	            React.createElement(
-	                'div',
-	                { className: 'page-header' },
-	                React.createElement(
-	                    'h3',
-	                    null,
-	                    React.createElement('i', { className: 'fa fa-coffee' }),
-	                    '店铺列表'
-	                )
-	            ),
-	            React.createElement(List, { data: this.props.data })
-	        );
-	    }
-	});
-
-	var List = React.createClass({
-	    displayName: 'List',
-
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'list-group' },
-	            this.props.data && this.props.data.map(function (item, index) {
-	                return React.createElement(Item, { data: item, key: index });
-	            })
 	        );
 	    }
 	});
@@ -2529,46 +1866,67 @@
 
 	    render: function render() {
 	        var store = this.props.data;
+	        var index = this.props.index;
 	        return React.createElement(
-	            'a',
-	            { className: 'list-group-item store-item', params: { storeId: store._id }, href: '#' },
+	            'tr',
+	            null,
 	            React.createElement(
-	                'h3',
-	                { className: 'list-group-item-heading' },
+	                'td',
+	                null,
+	                index
+	            ),
+	            React.createElement(
+	                'td',
+	                null,
 	                store.name
 	            ),
 	            React.createElement(
-	                'div',
-	                { className: 'list-group-item-text' },
-	                React.createElement('i', { className: 'fa fa-shopping-cart' }),
+	                'td',
+	                null,
+	                store.group && store.group.groupName
+	            ),
+	            React.createElement(
+	                'td',
+	                null,
+	                store.adder && store.adder.realName
+	            ),
+	            React.createElement(
+	                'td',
+	                null,
+	                moment(store.addTime).format('YYYY-MM-DD')
+	            ),
+	            React.createElement(
+	                'td',
+	                null,
+	                store.updater && store.updater.realName
+	            ),
+	            React.createElement(
+	                'td',
+	                null,
+	                moment(store.updateTime).format('YYYY-MM-DD')
+	            ),
+	            React.createElement(
+	                'td',
+	                null,
 	                React.createElement(
-	                    'span',
-	                    null,
-	                    ' ',
-	                    store.mainProduct,
-	                    ' '
+	                    'button',
+	                    { type: 'button', className: 'btn btn-primary btn-xs' },
+	                    '修改'
 	                ),
-	                React.createElement('i', { className: 'fa fa-mobile-phone' }),
 	                React.createElement(
-	                    'span',
-	                    null,
-	                    ' ',
-	                    store.telephone,
-	                    ' '
+	                    'button',
+	                    { type: 'button', className: 'btn btn-danger btn-xs' },
+	                    '删除'
 	                ),
-	                React.createElement('i', { className: 'fa fa-taxi' }),
 	                React.createElement(
-	                    'span',
-	                    null,
-	                    ' ',
-	                    store.address
+	                    'button',
+	                    { type: 'button', className: 'btn btn-info btn-xs' },
+	                    '套餐'
 	                )
 	            )
 	        );
 	    }
 	});
-
-	module.exports = Store;
 
 /***/ }
 /******/ ]);

@@ -10,9 +10,9 @@ var Constants = require('../../../lib/utils/constants');
 
 var LabelInput = require('../common/label-input.jsx');
 var Sidebar = require('./sidebar.jsx');
+var Upload = require('../common/upload.jsx');
 
-
-var HeadImg = React.createClass({
+var Image = React.createClass({
     render: function () {
         return (
             <div className="head-img">
@@ -29,66 +29,12 @@ var HeadImg = React.createClass({
     }
 });
 
-var Upload = React.createClass({
-    getInitialState: function () {
-        return {error: ''};
-    },
-    componentDidMount: function () {
-        this.createUpload();
-    },
-    createUpload: function () {
-        WebUploader.create({
-            server: '/image/upload',
-            pick: {
-                id: '#uploadBtn',
-                multiple: false
-            },
-            compress: {
-                width: 100,
-                height: 100,
-                quality: 90,
-                allowMagnify: false,
-                crop: false
-            },
-            auto: true,
-            accept: {
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/*'
-            },
-            fileVal: 'file',
-            multiple: false,
-            duplicate: true
-        })
-            .on('error', function (type) {
-                switch (type) {
-                    case 'Q_TYPE_DENIED':
-                        this.setState({error: '图片格式错误'});
-                        break;
-                    case 'Q_EXCEED_SIZE_LIMIT':
-
-                        break;
-                }
-            }.bind(this))
-            .on('uploadSuccess', function (file, response) {
-                this.props.uploadSuccess(file, response);
-            }.bind(this));
-    },
-    render: function () {
-        return (
-            <div>
-                <span id="uploadBtn">上传图片</span>
-                {this.state.error ? <div className="form-error">{this.state.error}</div> : ''}
-            </div>
-        )
-    }
-});
 
 module.exports = React.createClass({
     mixins: [Router.Navigation],
     getInitialState: function () {
         return {
-            headImg: this.props.data.headImg || '',
+            image: this.props.data.image ? {id: this.props.data.image} : null,
             isSubmitting: false,
             initUpload: false,
             errors: {}
@@ -98,7 +44,9 @@ module.exports = React.createClass({
         e.preventDefault();
         this.setState({isSubmitting: true});
 
-        backend.post.accountMessage(_.extend(model, {headImg: this.state.headImg})).then(function (response) {
+        _.extend(model, {image: this.state.image && this.state.image.id || ''});
+
+        backend.post.accountMessage(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
                 this.transitionTo('index');
             } else {
@@ -107,23 +55,23 @@ module.exports = React.createClass({
         }.bind(this));
     },
     handleDeleteImg: function () {
-        this.setState({headImg: ''});
+        this.setState({image: null});
     },
     uploadSuccess: function (file, response) {
-        this.setState({headImg: response.data.imageId});
+        this.setState({image: response.data});
     },
     render: function () {
         var btnText = this.state.isSubmitting ? '保存中...' : '保存';
         var user = this.props.data || {};
         return (
-            <div>
+            <div className="container">
                 <Sidebar channel="account-message"/>
 
-                <div className="main-content">
+                <div className="col-sm-9 main-content">
                     <div className="page-header">
                         <h4>基本信息</h4>
                     </div>
-                    <Validator.Form className="form-horizontal col-lg-4" submit={this.handleSubmit} type="blur">
+                    <Validator.Form className="form-horizontal public-form" submit={this.handleSubmit} type="blur">
                         <div className="alert alert-danger"
                              style={{display:_.isEmpty(this.state.errors)?'none':'block'}}>
                             {_.values(this.state.errors).map(function (error, index) {
@@ -131,19 +79,20 @@ module.exports = React.createClass({
                             })}
                         </div>
                         <div className="form-group">
-                            <label className="col-lg-2 control-label">头像</label>
+                            <label className="col-sm-2 control-label">头像</label>
 
-                            <div className="col-lg-10">
+                            <div className="col-sm-10">
 
-                                {this.state.headImg ?
-                                    <HeadImg handleDelete={this.handleDeleteImg} src={'/image/'+this.state.headImg}/> :
+                                {this.state.image ?
+                                    <Image handleDelete={this.handleDeleteImg}
+                                           src={'/image/'+this.state.image.id}/> :
                                     <Upload uploadSuccess={this.uploadSuccess}/>}
                             </div>
                         </div>
                         <div className="form-group">
-                            <label className="col-lg-2 control-label">邮箱</label>
+                            <label className="col-sm-2 control-label">邮箱</label>
 
-                            <div className="col-lg-10">
+                            <div className="col-sm-10">
                                 <input type="text" className="form-control" value={user.email} disabled/>
                             </div>
                         </div>
@@ -180,7 +129,7 @@ module.exports = React.createClass({
                             />
 
                         <div className="form-group">
-                            <div className="col-lg-offset-2 col-lg-10">
+                            <div className="col-sm-offset-2 col-sm-10">
                                 <button type="submit" className="btn btn-primary btn-block"
                                         disabled={this.state.isSubmitting}>{btnText}</button>
                             </div>

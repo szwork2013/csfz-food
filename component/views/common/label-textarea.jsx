@@ -22,11 +22,12 @@ module.exports = React.createClass({
                 <label className="col-sm-2 control-label">{this.props.label}</label>
 
                 <div className="col-sm-10">
-                    <input {...this.props}
+                    <textarea {...this.props}
                         className="form-control"
                         onChange={this.handleChange}
                         onBlur={this.handleBlur}
                         onFocus={this.handleFocus}
+                        style={{resize:'none'}}
                         />
 
                     <p className="form-error" style={{display:this.isValid()?'none':'block'}}>

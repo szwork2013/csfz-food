@@ -5,8 +5,8 @@
     "to": "index"
   },
   {
-    "channel": "group",
-    "text": "餐组管理",
-    "to": "group"
+    "channel": "manage",
+    "text": "管理",
+    "to": "manage-group"
   }
 ]

@@ -2,15 +2,15 @@ var React = require('react');
 var Router = require('react-router');
 var moment = require('moment');
 var _ = require('underscore');
-var backend = require('../../utils/backend');
+var backend = require('../../../utils/backend');
 
-var Sidebar = require('./sidebar.jsx');
+var Sidebar = require('../sidebar.jsx');
 
 module.exports = React.createClass({
     render: function () {
         return (
-            <div>
-                <Sidebar channel="group"/>
+            <div className="container">
+                <Sidebar channel="manage-group"/>
                 <List data={this.props.data} user={this.props.session.user}/>
             </div>
         )
@@ -24,10 +24,12 @@ var List = React.createClass({
     },
     render: function () {
         return (
-            <div className="main-content">
-                <div className="page-header">
-                    <h4>所有餐组</h4>
-                </div>
+            <div className="col-sm-9 main-content">
+                <ul className="nav nav-tabs">
+                    <li role="presentation" className="active"><a href="#">我的餐组</a></li>
+                    <li role="presentation"><a href="#">我的申请</a></li>
+                    <li role="presentation"><a href="#">管理申请</a></li>
+                </ul>
                 <table className="table table-striped table-hover ">
                     <thead>
                     <tr>

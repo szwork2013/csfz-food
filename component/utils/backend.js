@@ -1,29 +1,6 @@
 var $ = require('jquery');
 
 module.exports = {
-    get: {
-        signup: function () {
-            return $.get('/signup');
-        },
-        signin: function () {
-            return $.get('/signin');
-        },
-        accountMessage: function () {
-            return $.get('/account/message');
-        },
-        accountPassword: function () {
-            return $.get('/account/password');
-        },
-        group: function () {
-            return $.get('/group');
-        },
-        groupMessage: function () {
-            return $.get('/group/message');
-        },
-        home: function () {
-            return $.get('/');
-        }
-    },
     post: {
         signup: function (data) {
             return $.post('/signup', data);
@@ -42,6 +19,9 @@ module.exports = {
         },
         groupMessage: function (data) {
             return $.post('/group/message', data);
+        },
+        storeNew: function (data) {
+            return $.post('/store/new', data);
         }
     }
 };

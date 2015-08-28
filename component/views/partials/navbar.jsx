@@ -26,7 +26,7 @@ module.exports = React.createClass({
 
         return (
             <nav className="navbar navbar-default navbar-fixed-top">
-                <div className="container-fluid">
+                <div className="container">
                     <div className="navbar-header">
                         <Link className="navbar-brand" to="index">CSFZ-FOOD</Link>
                     </div>
