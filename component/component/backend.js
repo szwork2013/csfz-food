@@ -14,14 +14,8 @@ module.exports = {
         accountPassword: function (data) {
             return $.post('/account/password', data);
         },
-        group: function () {
-            return $.get('/group');
-        },
-        groupMessage: function (data) {
-            return $.post('/group/message', data);
-        },
-        storeNew: function (data) {
-            return $.post('/store/new', data);
+        manageStoreNew: function (data) {
+            return $.post('/manage/store/new', data);
         }
     }
 };

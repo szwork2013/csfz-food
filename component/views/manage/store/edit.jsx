@@ -3,45 +3,30 @@ var Router = require('react-router');
 var $ = require('jquery');
 var _ = require('underscore');
 
-var backend = require('../../../utils/backend');
-var Validator = require('../../../utils/react-validator');
+var backend = require('../../../component/backend');
+var Validator = require('../../../component/react-validator');
 var Constants = require('../../../../lib/utils/constants');
-
+var Utils = require('../../../component/utils');
 
 var LabelInput = require('../../common/label-input.jsx');
 var LabelTextarea = require('../../common/label-textarea.jsx');
 var Sidebar = require('../sidebar.jsx');
 var Upload = require('../../common/upload.jsx');
 
+
 var Image = React.createClass({
-    calcuImage: function (imgWidth, imageHeight, destWidth, desHeight) {
-        if (!imgWidth || !imageHeight || !destWidth || !desHeight) {
-            return {};
-        }
-        var rate = destWidth / desHeight;
-
-        if (imgWidth > imageHeight * rate && imgWidth > destWidth) {
-            return {width: destWidth};
-        }
-
-        if (imgWidth <= imageHeight * rate && imageHeight > desHeight) {
-            return {height: desHeight};
-        }
-
-        return {};
-    },
     render: function () {
         return (
             <div className="head-img">
                 <div className="vam">
                     <div className="vam-out">
                         <div className="vam-in">
-                            <img src={'/image/'+this.props.image.id}
-                                 style={this.calcuImage(this.props.image.width,this.props.image.height,100,100)}/>
+                            <img src={'/image/'+this.props.image._id}
+                                 style={Utils.calcuImageSize(this.props.image.width,this.props.image.height,100,100)}/>
                         </div>
                     </div>
                 </div>
-                <i className="icon icon-close upload-delete" onClick={this.props.handleDelete}></i>
+                <i className="icon icon-close upload-delete" onClick={this.props.handleDeleteImg}></i>
             </div>
         )
     }
@@ -66,9 +51,8 @@ module.exports = React.createClass({
     },
     getInitialState: function () {
         return {
-            image: null,
+            image: this.props.data && this.props.data.image || null,
             isSubmitting: false,
-            initUpload: false,
             errors: {}
         };
     },
@@ -77,12 +61,12 @@ module.exports = React.createClass({
         this.setState({isSubmitting: true});
 
         if (this.state.image) {
-            _.extend(model, {image: this.state.image.id});
+            _.extend(model, {image: this.state.image._id});
         }
 
-        backend.post.storeNew(model).then(function (response) {
+        backend.post.manageStoreNew(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
-                this.transitionTo('index');
+                this.transitionTo('manage-store');
             } else {
                 this.setState({errors: response.errors, isSubmitting: false});
             }
@@ -97,6 +81,7 @@ module.exports = React.createClass({
     render: function () {
         var btnText = this.state.isSubmitting ? '保存中...' : '保存';
         var store = this.props.data || {};
+
         return (
             <div className="container">
                 <Sidebar/>
@@ -177,6 +162,17 @@ module.exports = React.createClass({
                                     defaultValue={store.address}
                                     maxlen="40"
                                     maxlenError="40个字符以内"
+                            />
+                        <LabelInput name="minPrice"
+                                    type="text"
+                                    key="minPrice"
+                                    maxLength="10"
+                                    label="最低起送价"
+                                    required="true"
+                                    requiredError="请输入最低起送价"
+                                    defaultValue={store.minPrice}
+                                    pattern={Constants.regexp.PRICE}
+                                    patternError="最低起送价格式错误"
                             />
 
                         <div className="form-group">
