@@ -109,16 +109,14 @@
 
 	var App = __webpack_require__(11);
 	var Index = __webpack_require__(16);
-	var Signin = __webpack_require__(19);
+	var Signin = __webpack_require__(17);
 	var Signup = __webpack_require__(5);
 
-	var AccountMessage = __webpack_require__(20);
-	var AccountPassword = __webpack_require__(26);
+	var AccountMessage = __webpack_require__(18);
+	var AccountPassword = __webpack_require__(28);
 
-	//var GroupMessage = require('./views/group/message.jsx');
-
-	var ManageGroup = __webpack_require__(27);
-	var ManageStore = __webpack_require__(31);
+	var ManageStore = __webpack_require__(29);
+	var ManageStoreEdit = __webpack_require__(33);
 
 	var routes = React.createElement(
 	    Route,
@@ -128,8 +126,9 @@
 	    React.createElement(Route, { name: 'signup', path: 'signup', handler: Signup }),
 	    React.createElement(Route, { name: 'account-message', path: 'account/message', handler: AccountMessage }),
 	    React.createElement(Route, { name: 'account-password', path: 'account/password', handler: AccountPassword }),
-	    React.createElement(Route, { name: 'manage-group', path: 'manage/group', handler: ManageGroup }),
-	    React.createElement(Route, { name: 'manage-store', path: 'manage/store', handler: ManageStore })
+	    React.createElement(Route, { name: 'manage-store', path: 'manage/store', handler: ManageStore }),
+	    React.createElement(Route, { name: 'manage-store-new', path: 'manage/store/new', handler: ManageStoreEdit }),
+	    React.createElement(Route, { name: 'manage-store-edit', path: 'manage/store/edit/:storeId', handler: ManageStoreEdit })
 	);
 
 	module.exports = routes;
@@ -585,14 +584,8 @@
 	        accountPassword: function (data) {
 	            return $.post('/account/password', data);
 	        },
-	        group: function () {
-	            return $.get('/group');
-	        },
-	        groupMessage: function (data) {
-	            return $.post('/group/message', data);
-	        },
-	        storeNew: function (data) {
-	            return $.post('/store/new', data);
+	        manageStoreNew: function (data) {
+	            return $.post('/manage/store/new', data);
 	        }
 	    }
 	};
@@ -816,8 +809,8 @@
 		},
 		{
 			"channel": "manage",
-			"text": "管理",
-			"to": "manage-group"
+			"text": "店铺管理",
+			"to": "manage-store"
 		}
 	]
 
@@ -829,7 +822,6 @@
 
 	var React = __webpack_require__(1);
 	var backend = __webpack_require__(10);
-	var ee = __webpack_require__(17);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -849,20 +841,6 @@
 
 /***/ },
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var EventEmitter = __webpack_require__(18);
-
-	module.exports = new EventEmitter();
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	module.exports = EventEmitter;
-
-/***/ },
-/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1020,7 +998,7 @@
 	module.exports = Signin;
 
 /***/ },
-/* 20 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1033,10 +1011,12 @@
 	var backend = __webpack_require__(10);
 	var Validator = __webpack_require__(8);
 	var Constants = __webpack_require__(9);
+	var Utils = __webpack_require__(19);
+	var ui = __webpack_require__(20);
 
-	var LabelInput = __webpack_require__(21);
-	var Sidebar = __webpack_require__(22);
-	var Upload = __webpack_require__(25);
+	var LabelInput = __webpack_require__(23);
+	var Sidebar = __webpack_require__(24);
+	var Upload = __webpack_require__(27);
 
 	var Image = React.createClass({
 	    displayName: 'Image',
@@ -1054,11 +1034,12 @@
 	                    React.createElement(
 	                        'div',
 	                        { className: 'vam-in' },
-	                        React.createElement('img', { src: this.props.src })
+	                        React.createElement('img', { src: '/image/' + this.props.image._id,
+	                            style: Utils.calcuImageSize(this.props.image.width, this.props.image.height, 100, 100) })
 	                    )
 	                )
 	            ),
-	            React.createElement('i', { className: 'icon icon-close upload-delete', onClick: this.props.handleDelete })
+	            React.createElement('i', { className: 'icon icon-close upload-delete', onClick: this.props.handleDeleteImg })
 	        );
 	    }
 	});
@@ -1069,9 +1050,8 @@
 	    mixins: [Router.Navigation],
 	    getInitialState: function getInitialState() {
 	        return {
-	            image: this.props.data.image ? { id: this.props.data.image } : null,
+	            image: this.props.data.image ? this.props.data.image : null,
 	            isSubmitting: false,
-	            initUpload: false,
 	            errors: {}
 	        };
 	    },
@@ -1079,11 +1059,12 @@
 	        e.preventDefault();
 	        this.setState({ isSubmitting: true });
 
-	        _.extend(model, { image: this.state.image && this.state.image.id || '' });
+	        _.extend(model, { image: this.state.image && this.state.image._id || '' });
 
 	        backend.post.accountMessage(model).then((function (response) {
 	            if (response.code === Constants.resCode.COMMON) {
-	                this.transitionTo('index');
+	                this.setState({ errors: {}, isSubmitting: false });
+	                ui.tip('保存成功！');
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
 	            }
@@ -1140,8 +1121,7 @@
 	                        React.createElement(
 	                            'div',
 	                            { className: 'col-sm-10' },
-	                            this.state.image ? React.createElement(Image, { handleDelete: this.handleDeleteImg,
-	                                src: '/image/' + this.state.image.id }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess })
+	                            this.state.image ? React.createElement(Image, { handleDeleteImg: this.handleDeleteImg, image: this.state.image }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess })
 	                        )
 	                    ),
 	                    React.createElement(
@@ -1210,7 +1190,89 @@
 	});
 
 /***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	    calcuImageSize: function (imgWidth, imageHeight, destWidth, desHeight) {
+	        if (!imgWidth || !imageHeight || !destWidth || !desHeight) {
+	            return {};
+	        }
+	        var rate = destWidth / desHeight;
+
+	        if (imgWidth > imageHeight * rate && imgWidth > destWidth) {
+	            return {width: destWidth};
+	        }
+
+	        if (imgWidth <= imageHeight * rate && imageHeight > desHeight) {
+	            return {height: desHeight};
+	        }
+
+	        return {};
+	    }
+	};
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = {
+	    tip: __webpack_require__(21)
+	};
+
+
+/***/ },
 /* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(3);
+	var utils = __webpack_require__(22);
+
+	var $tip = $('<div class="alpha"><div class="alert alert-success"></div></div>').appendTo('body').hide();
+
+	module.exports = function (content) {
+	    $tip.find('.alert').html(content);
+	    utils.calcuPosition($tip);
+	    $tip.show();
+
+	    setTimeout(
+	        function () {
+	            $tip.hide();
+	        },
+	        1000
+	    );
+
+	    $(window).on('resize scroll', function () {
+	        if($tip.is(':visible')){
+	            utils.calcuPosition($tip);
+	        }
+	    });
+	};
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	    calcuPosition: function (el) {
+	        var winWidth = $(window).width();
+	        var winHeight = $(window).height();
+
+	        var elWidth = el.width();
+	        var elHeight = el.height();
+
+	        el.css({
+	            position: 'fixed',
+	            top: (winHeight - elHeight) / 2,
+	            left: (winWidth - elWidth) / 2
+	        });
+	    }
+	};
+
+
+/***/ },
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1272,7 +1334,7 @@
 	});
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1280,8 +1342,8 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 
-	var Sidebar = __webpack_require__(23);
-	var SidebarJSON = __webpack_require__(24);
+	var Sidebar = __webpack_require__(25);
+	var SidebarJSON = __webpack_require__(26);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1292,7 +1354,7 @@
 	});
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1336,7 +1398,7 @@
 	});
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -1355,7 +1417,7 @@
 	]
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1433,7 +1495,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1446,8 +1508,8 @@
 	var Validator = __webpack_require__(8);
 	var Constants = __webpack_require__(9);
 
-	var LabelInput = __webpack_require__(21);
-	var Sidebar = __webpack_require__(22);
+	var LabelInput = __webpack_require__(23);
+	var Sidebar = __webpack_require__(24);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1465,7 +1527,7 @@
 
 	        backend.post.accountPassword(model).then((function (response) {
 	            if (response.code === Constants.resCode.COMMON) {
-	                this.transitionTo('index');
+	                this.transitionTo('signin');
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
 	            }
@@ -1553,177 +1615,6 @@
 	});
 
 /***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-	var moment = __webpack_require__(28);
-	var _ = __webpack_require__(6);
-	var backend = __webpack_require__(10);
-
-	var Sidebar = __webpack_require__(29);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'container' },
-	            React.createElement(Sidebar, { channel: 'manage-group' }),
-	            React.createElement(List, { data: this.props.data, user: this.props.session.user })
-	        );
-	    }
-	});
-
-	var List = React.createClass({
-	    displayName: 'List',
-
-	    getDefaultProps: function getDefaultProps() {
-	        return { data: [] };
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'col-sm-9 main-content' },
-	            React.createElement(
-	                'ul',
-	                { className: 'nav nav-tabs' },
-	                React.createElement(
-	                    'li',
-	                    { role: 'presentation', className: 'active' },
-	                    React.createElement(
-	                        'a',
-	                        { href: '#' },
-	                        '我的餐组'
-	                    )
-	                ),
-	                React.createElement(
-	                    'li',
-	                    { role: 'presentation' },
-	                    React.createElement(
-	                        'a',
-	                        { href: '#' },
-	                        '我的申请'
-	                    )
-	                ),
-	                React.createElement(
-	                    'li',
-	                    { role: 'presentation' },
-	                    React.createElement(
-	                        'a',
-	                        { href: '#' },
-	                        '管理申请'
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'table',
-	                { className: 'table table-striped table-hover ' },
-	                React.createElement(
-	                    'thead',
-	                    null,
-	                    React.createElement(
-	                        'tr',
-	                        null,
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '#'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '餐组名称'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '创建人'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '创建时间'
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            '操作'
-	                        )
-	                    )
-	                ),
-	                React.createElement(
-	                    'tbody',
-	                    null,
-	                    _.isArray(this.props.data) ? this.props.data.map((function (item, index) {
-	                        return React.createElement(Item, { data: item, user: this.props.user, index: index, key: index });
-	                    }).bind(this)) : ''
-	                )
-	            )
-	        );
-	    }
-	});
-
-	var Item = React.createClass({
-	    displayName: 'Item',
-
-	    render: function render() {
-	        var index = this.props.index;
-	        var group = this.props.data;
-
-	        var user = this.props.user;
-
-	        return React.createElement(
-	            'tr',
-	            null,
-	            React.createElement(
-	                'td',
-	                null,
-	                index
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                group.groupName
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                group.adder.realName
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                moment(group.addTime).format('YYYY-MM-DD')
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
-	                group._id === user.group ? React.createElement(
-	                    'button',
-	                    { type: 'button', className: 'btn btn-danger btn-xs' },
-	                    '退出该组'
-	                ) : React.createElement(
-	                    'button',
-	                    { type: 'button', className: 'btn btn-primary btn-xs' },
-	                    '申请加入'
-	                )
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	module.exports = moment;
-
-/***/ },
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1731,49 +1622,10 @@
 
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
-
-	var Sidebar = __webpack_require__(23);
-	var SidebarJSON = __webpack_require__(30);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    render: function render() {
-	        return React.createElement(Sidebar, { channel: this.props.channel, channels: SidebarJSON, header: '内容管理' });
-	    }
-	});
-
-/***/ },
-/* 30 */
-/***/ function(module, exports) {
-
-	module.exports = [
-		{
-			"channel": "manage-group",
-			"text": "餐组管理",
-			"iconClass": "fa-building",
-			"to": "manage-group"
-		},
-		{
-			"channel": "manage-store",
-			"text": "店铺管理",
-			"iconClass": "fa-building",
-			"to": "manage-store"
-		}
-	]
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var Router = __webpack_require__(2);
-	var moment = __webpack_require__(28);
+	var moment = __webpack_require__(30);
 	var backend = __webpack_require__(10);
 
-	var Sidebar = __webpack_require__(29);
+	var Sidebar = __webpack_require__(31);
 
 	var Link = Router.Link;
 
@@ -1794,7 +1646,12 @@
 	                    React.createElement(
 	                        'h4',
 	                        null,
-	                        '所有店铺'
+	                        '所有店铺',
+	                        React.createElement(
+	                            Link,
+	                            { to: 'manage-store-new', className: 'btn btn-primary btn-sm pull-right' },
+	                            '新增店铺'
+	                        )
 	                    )
 	                ),
 	                React.createElement(
@@ -1815,11 +1672,6 @@
 	                                'th',
 	                                null,
 	                                '店铺名称'
-	                            ),
-	                            React.createElement(
-	                                'th',
-	                                null,
-	                                '所属餐组'
 	                            ),
 	                            React.createElement(
 	                                'th',
@@ -1883,11 +1735,6 @@
 	            React.createElement(
 	                'td',
 	                null,
-	                store.group && store.group.groupName
-	            ),
-	            React.createElement(
-	                'td',
-	                null,
 	                store.adder && store.adder.realName
 	            ),
 	            React.createElement(
@@ -1909,8 +1756,8 @@
 	                'td',
 	                null,
 	                React.createElement(
-	                    'button',
-	                    { type: 'button', className: 'btn btn-primary btn-xs' },
+	                    Link,
+	                    { to: 'manage-store-edit', className: 'btn btn-primary btn-xs', params: { storeId: store._id } },
 	                    '修改'
 	                ),
 	                React.createElement(
@@ -1922,6 +1769,338 @@
 	                    'button',
 	                    { type: 'button', className: 'btn btn-info btn-xs' },
 	                    '套餐'
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 30 */
+/***/ function(module, exports) {
+
+	module.exports = moment;
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(2);
+
+	var Sidebar = __webpack_require__(25);
+	var SidebarJSON = __webpack_require__(32);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    render: function render() {
+	        return React.createElement(Sidebar, { channel: this.props.channel, channels: SidebarJSON, header: '内容管理' });
+	    }
+	});
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	module.exports = [
+		{
+			"channel": "manage-store",
+			"text": "店铺管理",
+			"iconClass": "fa-building",
+			"to": "manage-store"
+		}
+	]
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(2);
+	var $ = __webpack_require__(3);
+	var _ = __webpack_require__(6);
+
+	var backend = __webpack_require__(10);
+	var Validator = __webpack_require__(8);
+	var Constants = __webpack_require__(9);
+	var Utils = __webpack_require__(19);
+
+	var LabelInput = __webpack_require__(23);
+	var LabelTextarea = __webpack_require__(34);
+	var Sidebar = __webpack_require__(31);
+	var Upload = __webpack_require__(27);
+
+	var Image = React.createClass({
+	    displayName: 'Image',
+
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            { className: 'head-img' },
+	            React.createElement(
+	                'div',
+	                { className: 'vam' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'vam-out' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'vam-in' },
+	                        React.createElement('img', { src: '/image/' + this.props.image._id,
+	                            style: Utils.calcuImageSize(this.props.image.width, this.props.image.height, 100, 100) })
+	                    )
+	                )
+	            ),
+	            React.createElement('i', { className: 'icon icon-close upload-delete', onClick: this.props.handleDeleteImg })
+	        );
+	    }
+	});
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Router.Navigation],
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            config: {
+	                compress: {
+	                    width: 500,
+	                    height: 500,
+	                    quality: 90,
+	                    allowMagnify: false,
+	                    crop: false
+	                }
+	            }
+
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            image: this.props.data && this.props.data.image || null,
+	            isSubmitting: false,
+	            errors: {}
+	        };
+	    },
+	    handleSubmit: function handleSubmit(e, model) {
+	        e.preventDefault();
+	        this.setState({ isSubmitting: true });
+
+	        if (this.state.image) {
+	            _.extend(model, { image: this.state.image._id });
+	        }
+
+	        backend.post.manageStoreNew(model).then((function (response) {
+	            if (response.code === Constants.resCode.COMMON) {
+	                this.transitionTo('manage-store');
+	            } else {
+	                this.setState({ errors: response.errors, isSubmitting: false });
+	            }
+	        }).bind(this));
+	    },
+	    handleDeleteImg: function handleDeleteImg() {
+	        this.setState({ image: null });
+	    },
+	    uploadSuccess: function uploadSuccess(file, response) {
+	        this.setState({ image: response.data });
+	    },
+	    render: function render() {
+	        var btnText = this.state.isSubmitting ? '保存中...' : '保存';
+	        var store = this.props.data || {};
+
+	        return React.createElement(
+	            'div',
+	            { className: 'container' },
+	            React.createElement(Sidebar, null),
+	            React.createElement(
+	                'div',
+	                { className: 'col-sm-9 main-content' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'page-header' },
+	                    React.createElement(
+	                        'h4',
+	                        null,
+	                        store._id ? '修改店铺' : '新增店铺'
+	                    )
+	                ),
+	                React.createElement(
+	                    Validator.Form,
+	                    { className: 'form-horizontal public-form', submit: this.handleSubmit, type: 'blur' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'alert alert-danger',
+	                            style: { display: _.isEmpty(this.state.errors) ? 'none' : 'block' } },
+	                        _.values(this.state.errors).map(function (error, index) {
+	                            return React.createElement(
+	                                'p',
+	                                { key: index },
+	                                error
+	                            );
+	                        })
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        React.createElement(
+	                            'label',
+	                            { className: 'col-sm-2 control-label' },
+	                            '图片'
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'col-sm-10' },
+	                            this.state.image ? React.createElement(Image, { handleDelete: this.handleDeleteImg, image: this.state.image }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess, config: this.props.config })
+	                        )
+	                    ),
+	                    React.createElement(LabelInput, { name: 'name',
+	                        type: 'text',
+	                        key: 'name',
+	                        maxLength: '40',
+	                        label: '店铺名称',
+	                        defaultValue: store.name,
+	                        required: 'true',
+	                        requiredError: '请输入店铺名称',
+	                        maxlen: '40',
+	                        maxlenError: '40个字符以内'
+	                    }),
+	                    React.createElement(LabelTextarea, { name: 'description',
+	                        type: 'text',
+	                        key: 'description',
+	                        rows: '4',
+	                        maxLength: '200',
+	                        label: '店铺描述',
+	                        defaultValue: store.description,
+	                        required: 'true',
+	                        requiredError: '请输入店铺描述',
+	                        maxlen: '200',
+	                        maxlenError: '200个字符以内'
+	                    }),
+	                    React.createElement(LabelInput, { name: 'mainProduct',
+	                        type: 'text',
+	                        key: 'mainProduct',
+	                        maxLength: '20',
+	                        label: '主营产品',
+	                        defaultValue: store.mainProduct,
+	                        required: 'true',
+	                        requiredError: '请输入主营产品',
+	                        maxlen: '20',
+	                        maxlenError: '20个字符以内'
+	                    }),
+	                    React.createElement(LabelInput, { name: 'telephone',
+	                        type: 'text',
+	                        key: 'telephone',
+	                        maxLength: '20',
+	                        label: '联系方式',
+	                        defaultValue: store.telephone,
+	                        required: 'true',
+	                        requiredError: '请输入联系方式',
+	                        pattern: Constants.regexp.TELEPHONE,
+	                        patternError: '联系方式格式错误'
+	                    }),
+	                    React.createElement(LabelInput, { name: 'address',
+	                        type: 'text',
+	                        key: 'address',
+	                        maxLength: '40',
+	                        label: '店铺地址',
+	                        required: 'true',
+	                        requiredError: '请输入店铺地址',
+	                        defaultValue: store.address,
+	                        maxlen: '40',
+	                        maxlenError: '40个字符以内'
+	                    }),
+	                    React.createElement(LabelInput, { name: 'minPrice',
+	                        type: 'text',
+	                        key: 'minPrice',
+	                        maxLength: '10',
+	                        label: '起送价',
+	                        required: 'true',
+	                        requiredError: '请输入起送价',
+	                        defaultValue: store.minPrice,
+	                        pattern: Constants.regexp.PRICE,
+	                        patternError: '起送价格式错误'
+	                    }),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        React.createElement(
+	                            'div',
+	                            { className: 'col-sm-offset-2 col-sm-10' },
+	                            React.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-primary btn-block',
+	                                    disabled: this.state.isSubmitting },
+	                                btnText
+	                            )
+	                        )
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(1);
+	var Validator = __webpack_require__(8);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Validator.Mixin],
+	    handleChange: function handleChange(e) {
+	        this.setValue(e.currentTarget.value);
+	    },
+	    handleBlur: function handleBlur() {
+	        this.valid();
+	    },
+	    handleFocus: function handleFocus() {
+	        this.setValid();
+	    },
+	    render: function render() {
+	        var errorMsg = this.isValid() ? '' : this.getErrorMsg();
+
+	        var classes = 'form-group' + (this.isInvalid() ? ' has-error' : '');
+
+	        return React.createElement(
+	            'div',
+	            { className: classes },
+	            React.createElement(
+	                'label',
+	                { className: 'col-sm-2 control-label' },
+	                this.props.label
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'col-sm-10' },
+	                React.createElement('textarea', _extends({}, this.props, {
+	                    className: 'form-control',
+	                    onChange: this.handleChange,
+	                    onBlur: this.handleBlur,
+	                    onFocus: this.handleFocus,
+	                    style: { resize: 'none' }
+	                })),
+	                React.createElement(
+	                    'p',
+	                    { className: 'form-error', style: { display: this.isValid() ? 'none' : 'block' } },
+	                    React.createElement('i', { className: 'fa fa-warning' }),
+	                    React.createElement(
+	                        'span',
+	                        null,
+	                        ' ',
+	                        errorMsg
+	                    )
 	                )
 	            )
 	        );

@@ -1,6 +1,5 @@
 var React = require('react');
-var backend = require('../utils/backend');
-var ee = require('../utils/eventemitter');
+var backend = require('../component/backend');
 
 module.exports = React.createClass({
     render: function () {

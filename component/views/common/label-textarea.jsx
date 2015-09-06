@@ -1,5 +1,5 @@
 var React = require('react');
-var Validator = require('../../utils/react-validator');
+var Validator = require('../../component/react-validator');
 
 module.exports = React.createClass({
     mixins: [Validator.Mixin],

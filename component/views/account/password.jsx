@@ -2,10 +2,10 @@ var React = require('react');
 var Router = require('react-router');
 var $ = require('jquery');
 var _ = require('underscore');
-var backend = require('../../utils/backend');
-var Validator = require('../../utils/react-validator');
+var backend = require('../../component/backend');
+var Validator = require('../../component/react-validator');
 var Constants = require('../../../lib/utils/constants');
-
+var ui = require('../../component/ui');
 
 var LabelInput = require('../common/label-input.jsx');
 var Sidebar = require('./sidebar.jsx');
@@ -24,7 +24,8 @@ module.exports = React.createClass({
 
         backend.post.accountPassword(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
-                this.transitionTo('index');
+                this.setState({errors: {}, isSubmitting: false});
+                ui.tip('修改成功！');
             } else {
                 this.setState({errors: response.errors, isSubmitting: false});
             }

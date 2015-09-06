@@ -2,9 +2,9 @@ var React = require('react');
 var Router = require('react-router');
 var _ = require('underscore');
 var Input = require('../common/input.jsx');
-var Validator = require('../../utils/react-validator');
+var Validator = require('../../component/react-validator');
 var Constants = require('../../../lib/utils/constants');
-var backend = require('../../utils/backend');
+var backend = require('../../component/backend');
 
 var Link = Router.Link;
 

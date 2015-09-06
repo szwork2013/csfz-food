@@ -3,10 +3,11 @@ var Router = require('react-router');
 var $ = require('jquery');
 var _ = require('underscore');
 
-var backend = require('../../utils/backend');
-var Validator = require('../../utils/react-validator');
+var backend = require('../../component/backend');
+var Validator = require('../../component/react-validator');
 var Constants = require('../../../lib/utils/constants');
-
+var Utils = require('../../component/utils');
+var ui = require('../../component/ui');
 
 var LabelInput = require('../common/label-input.jsx');
 var Sidebar = require('./sidebar.jsx');
@@ -19,11 +20,12 @@ var Image = React.createClass({
                 <div className="vam">
                     <div className="vam-out">
                         <div className="vam-in">
-                            <img src={this.props.src}/>
+                            <img src={'/image/'+this.props.image._id}
+                                 style={Utils.calcuImageSize(this.props.image.width,this.props.image.height,100,100)}/>
                         </div>
                     </div>
                 </div>
-                <i className="icon icon-close upload-delete" onClick={this.props.handleDelete}></i>
+                <i className="icon icon-close upload-delete" onClick={this.props.handleDeleteImg}></i>
             </div>
         )
     }
@@ -34,9 +36,8 @@ module.exports = React.createClass({
     mixins: [Router.Navigation],
     getInitialState: function () {
         return {
-            image: this.props.data.image ? {id: this.props.data.image} : null,
+            image: this.props.data.image ? this.props.data.image : null,
             isSubmitting: false,
-            initUpload: false,
             errors: {}
         };
     },
@@ -44,11 +45,12 @@ module.exports = React.createClass({
         e.preventDefault();
         this.setState({isSubmitting: true});
 
-        _.extend(model, {image: this.state.image && this.state.image.id || ''});
+        _.extend(model, {image: this.state.image && this.state.image._id || ''});
 
         backend.post.accountMessage(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
-                this.transitionTo('index');
+                this.setState({errors: {}, isSubmitting: false});
+                ui.tip('保存成功！');
             } else {
                 this.setState({errors: response.errors, isSubmitting: false});
             }
@@ -84,8 +86,7 @@ module.exports = React.createClass({
                             <div className="col-sm-10">
 
                                 {this.state.image ?
-                                    <Image handleDelete={this.handleDeleteImg}
-                                           src={'/image/'+this.state.image.id}/> :
+                                    <Image handleDeleteImg={this.handleDeleteImg} image={this.state.image}/> :
                                     <Upload uploadSuccess={this.uploadSuccess}/>}
                             </div>
                         </div>

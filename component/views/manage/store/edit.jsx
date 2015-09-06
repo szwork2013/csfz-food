@@ -88,7 +88,7 @@ module.exports = React.createClass({
 
                 <div className="col-sm-9 main-content">
                     <div className="page-header">
-                        <h4>新增店铺</h4>
+                        <h4>{store._id ? '修改店铺' : '新增店铺'}</h4>
                     </div>
                     <Validator.Form className="form-horizontal public-form" submit={this.handleSubmit} type="blur">
                         <div className="alert alert-danger"
@@ -167,12 +167,12 @@ module.exports = React.createClass({
                                     type="text"
                                     key="minPrice"
                                     maxLength="10"
-                                    label="最低起送价"
+                                    label="起送价"
                                     required="true"
-                                    requiredError="请输入最低起送价"
+                                    requiredError="请输入起送价"
                                     defaultValue={store.minPrice}
                                     pattern={Constants.regexp.PRICE}
-                                    patternError="最低起送价格式错误"
+                                    patternError="起送价格式错误"
                             />
 
                         <div className="form-group">

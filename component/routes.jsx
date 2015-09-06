@@ -14,10 +14,8 @@ var AccountMessage = require('./views/account/message.jsx');
 var AccountPassword = require('./views/account/password.jsx');
 
 
-//var GroupMessage = require('./views/group/message.jsx');
-
-var ManageGroup = require('./views/manage/group/index.jsx');
 var ManageStore = require('./views/manage/store/index.jsx');
+var ManageStoreEdit = require('./views/manage/store/edit.jsx');
 
 var routes = (
     <Route handler={App} path="/">
@@ -28,8 +26,9 @@ var routes = (
         <Route name="account-message" path="account/message" handler={AccountMessage}/>
         <Route name="account-password" path="account/password" handler={AccountPassword}/>
 
-        <Route name="manage-group" path="manage/group" handler={ManageGroup}/>
         <Route name="manage-store" path="manage/store" handler={ManageStore}/>
+        <Route name="manage-store-new" path="manage/store/new" handler={ManageStoreEdit}/>
+        <Route name="manage-store-edit" path="manage/store/edit/:storeId" handler={ManageStoreEdit}/>
     </Route>
 );
 

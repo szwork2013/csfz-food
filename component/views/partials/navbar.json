@@ -6,7 +6,7 @@
   },
   {
     "channel": "manage",
-    "text": "管理",
-    "to": "manage-group"
+    "text": "店铺管理",
+    "to": "manage-store"
   }
 ]
