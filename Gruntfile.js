@@ -15,7 +15,6 @@ module.exports = function (grunt) {
                     'node_modules/react-router/umd/ReactRouter.min.js',
                     'node_modules/reflux/dist/reflux.min.js',
                     'node_modules/wolfy87-eventemitter/EventEmitter.min.js',
-                    //'node_modules/react-dropzone-component/dist/dropzone.min.js',
 
                     'node_modules/jquery/dist/jquery.min.js',
                     'node_modules/moment/min/moment.min.js',

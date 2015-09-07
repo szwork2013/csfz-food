@@ -68,11 +68,15 @@ body {
     width: 500px
 }
 
-.control-label{
+.control-label {
     font-size: 14px;
 }
 
-.nav-tabs{
+.nav-tabs {
     margin-top: 34px;
     margin-bottom: 20px;
+}
+
+.ui-alert .modal-content{
+    width: 400px;
 }

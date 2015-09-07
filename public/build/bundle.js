@@ -113,10 +113,10 @@
 	var Signup = __webpack_require__(5);
 
 	var AccountMessage = __webpack_require__(18);
-	var AccountPassword = __webpack_require__(28);
+	var AccountPassword = __webpack_require__(29);
 
-	var ManageStore = __webpack_require__(29);
-	var ManageStoreEdit = __webpack_require__(33);
+	var ManageStore = __webpack_require__(30);
+	var ManageStoreEdit = __webpack_require__(35);
 
 	var routes = React.createElement(
 	    Route,
@@ -586,6 +586,12 @@
 	        },
 	        manageStoreNew: function (data) {
 	            return $.post('/manage/store/new', data);
+	        },
+	        manageStoreUpdate: function (data) {
+	            return $.post('/manage/store/update', data);
+	        },
+	        manageStoreDelete: function (data) {
+	            return $.post('/manage/store/delete', data);
 	        }
 	    }
 	};
@@ -1014,9 +1020,9 @@
 	var Utils = __webpack_require__(19);
 	var ui = __webpack_require__(20);
 
-	var LabelInput = __webpack_require__(23);
-	var Sidebar = __webpack_require__(24);
-	var Upload = __webpack_require__(27);
+	var LabelInput = __webpack_require__(24);
+	var Sidebar = __webpack_require__(25);
+	var Upload = __webpack_require__(28);
 
 	var Image = React.createClass({
 	    displayName: 'Image',
@@ -1218,7 +1224,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
-	    tip: __webpack_require__(21)
+	    tip: __webpack_require__(21),
+	    alert: __webpack_require__(23)
 	};
 
 
@@ -1229,23 +1236,39 @@
 	var $ = __webpack_require__(3);
 	var utils = __webpack_require__(22);
 
-	var $tip = $('<div class="alpha"><div class="alert alert-success"></div></div>').appendTo('body').hide();
 
-	module.exports = function (content) {
-	    $tip.find('.alert').html(content);
-	    utils.calcuPosition($tip);
+	module.exports = function (content, callback) {
+	    var $tip = $('<div><div class="tip-alpha"></div><div class="alert alert-success">' + content + '</div></div>').appendTo('body').hide();
+
+	    var $alpha = $tip.find('.tip-alpha');
+	    var $content = $tip.find('.alert');
+
+	    $alpha.css({
+	        position: 'fixed',
+	        top: 0,
+	        left: 0,
+	        width: '100%',
+	        height: '100%',
+	        opacity: 0
+	    });
+
+	    utils.calcuPosition($content);
 	    $tip.show();
 
 	    setTimeout(
 	        function () {
-	            $tip.hide();
+	            $tip.remove();
+	            if (typeof(callback) === 'function') {
+	                callback();
+	            }
 	        },
 	        1000
-	    );
+	    )
+	    ;
 
 	    $(window).on('resize scroll', function () {
-	        if($tip.is(':visible')){
-	            utils.calcuPosition($tip);
+	        if ($tip.is(':visible')) {
+	            utils.calcuPosition($content);
 	        }
 	    });
 	};
@@ -1273,6 +1296,69 @@
 
 /***/ },
 /* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(3);
+	var utils = __webpack_require__(22);
+
+	module.exports = function (options) {
+
+	    var $alert = $('<div class="ui-alert">' +
+	    '<div class="alert-alpha"></div>' +
+	    '    <div class="modal-content">' +
+	    '           <div class="modal-header">           ' +
+	    '               <button type="button" class="close" >×</button>' +
+	    '               <h4 class="modal-title">' + options.title + '</h4>' +
+	    '           </div>' +
+	    '           <div class="modal-body">' + options.content + '</div>' +
+	    '           <div class="modal-footer">' +
+	    '               <button type="button" class="btn btn-default btn-sm">取消</button>' +
+	    '               <button type="button" class="btn btn-primary btn-sm">确定</button>' +
+	    '           </div>' +
+	    '        </div>' +
+	    '</div>').appendTo('body').addClass(options.addClass);
+
+	    var $alpha = $alert.find('.alert-alpha');
+	    var $content = $alert.find('.modal-content');
+
+	    $content.on('click', '.modal-footer .btn-default', function () {
+	        $alert.remove();
+	        options && options.onCancel && options.onCancel();
+	    });
+
+	    $content.on('click', '.modal-footer .btn-primary', function () {
+	        $alert.remove();
+	        options && options.onCertain && options.onCertain();
+	    });
+
+	    $content.on('click', '.close', function () {
+	        $alert.remove();
+	    });
+
+
+	    $alpha.css({
+	        position: 'fixed',
+	        top: 0,
+	        left: 0,
+	        width: '100%',
+	        height: '100%',
+	        opacity: 0.2,
+	        backgroundColor: 'black'
+	    });
+
+	    utils.calcuPosition($content);
+
+
+	    $(window).on('resize scroll', function () {
+	        if ($alert.is(':visible')) {
+	            utils.calcuPosition($content);
+	        }
+	    });
+	};
+
+
+/***/ },
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1334,7 +1420,7 @@
 	});
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1342,8 +1428,8 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 
-	var Sidebar = __webpack_require__(25);
-	var SidebarJSON = __webpack_require__(26);
+	var Sidebar = __webpack_require__(26);
+	var SidebarJSON = __webpack_require__(27);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1354,7 +1440,7 @@
 	});
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1398,7 +1484,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -1417,7 +1503,7 @@
 	]
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1495,7 +1581,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1507,9 +1593,10 @@
 	var backend = __webpack_require__(10);
 	var Validator = __webpack_require__(8);
 	var Constants = __webpack_require__(9);
+	var ui = __webpack_require__(20);
 
-	var LabelInput = __webpack_require__(23);
-	var Sidebar = __webpack_require__(24);
+	var LabelInput = __webpack_require__(24);
+	var Sidebar = __webpack_require__(25);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1527,7 +1614,8 @@
 
 	        backend.post.accountPassword(model).then((function (response) {
 	            if (response.code === Constants.resCode.COMMON) {
-	                this.transitionTo('signin');
+	                this.setState({ errors: {}, isSubmitting: false });
+	                ui.tip('修改成功！');
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
 	            }
@@ -1615,23 +1703,44 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
-	var moment = __webpack_require__(30);
+	var moment = __webpack_require__(31);
+	var _ = __webpack_require__(6);
 	var backend = __webpack_require__(10);
+	var EventEmitter = __webpack_require__(32);
+	var ui = __webpack_require__(20);
+	var Constants = __webpack_require__(9);
 
-	var Sidebar = __webpack_require__(31);
-
+	var Sidebar = __webpack_require__(33);
+	var ee = new EventEmitter();
 	var Link = Router.Link;
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
+	    getInitialState: function getInitialState() {
+	        return { data: this.props.data || [] };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        ee.on('delete', (function (index, storeId, callback) {
+	            backend.post.manageStoreDelete({ storeId: storeId }).then((function (response) {
+	                callback && callback();
+	                if (response.code === Constants.resCode.COMMON) {
+	                    ui.tip('删除成功！');
+	                    this.state.data.splice(index, 1);
+	                    this.forceUpdate();
+	                } else {
+	                    ui.tip('删除失败，请稍后再试！');
+	                }
+	            }).bind(this));
+	        }).bind(this));
+	    },
 	    render: function render() {
 	        return React.createElement(
 	            'div',
@@ -1654,7 +1763,16 @@
 	                        )
 	                    )
 	                ),
-	                React.createElement(
+	                _.isEmpty(this.state.data) ? React.createElement(
+	                    'div',
+	                    { className: 'text-center' },
+	                    '暂无店铺，马上',
+	                    React.createElement(
+	                        Link,
+	                        { to: 'manage-store-new' },
+	                        '添加'
+	                    )
+	                ) : React.createElement(
 	                    'table',
 	                    { className: 'table table-striped table-hover ' },
 	                    React.createElement(
@@ -1703,7 +1821,7 @@
 	                    React.createElement(
 	                        'tbody',
 	                        null,
-	                        this.props.data.map((function (item, index) {
+	                        this.state.data.map((function (item, index) {
 	                            return React.createElement(Item, { data: item, index: index, key: index });
 	                        }).bind(this))
 	                    )
@@ -1716,9 +1834,27 @@
 	var Item = React.createClass({
 	    displayName: 'Item',
 
+	    getInitialState: function getInitialState() {
+	        return { deleting: false };
+	    },
+	    handleDelete: function handleDelete(index, storeId) {
+	        ui.alert({
+	            title: '删除',
+	            content: '确认删除该店铺？',
+	            onCertain: (function () {
+	                this.setState({ deleting: true });
+	                ee.emit('delete', index, storeId, (function () {
+	                    this.setState({ deleting: false });
+	                }).bind(this));
+	            }).bind(this)
+	        });
+	    },
 	    render: function render() {
 	        var store = this.props.data;
 	        var index = this.props.index;
+
+	        var delText = this.state.deleting ? '删除中...' : '删除';
+
 	        return React.createElement(
 	            'tr',
 	            null,
@@ -1757,18 +1893,20 @@
 	                null,
 	                React.createElement(
 	                    Link,
-	                    { to: 'manage-store-edit', className: 'btn btn-primary btn-xs', params: { storeId: store._id } },
+	                    { to: 'manage-store-edit', className: 'btn btn-primary btn-xs',
+	                        params: { storeId: store._id } },
 	                    '修改'
 	                ),
 	                React.createElement(
 	                    'button',
-	                    { type: 'button', className: 'btn btn-danger btn-xs' },
-	                    '删除'
+	                    { type: 'button', className: 'btn btn-danger btn-xs',
+	                        onClick: this.handleDelete.bind(this, index, store._id) },
+	                    delText
 	                ),
 	                React.createElement(
 	                    'button',
 	                    { type: 'button', className: 'btn btn-info btn-xs' },
-	                    '套餐'
+	                    '套餐管理'
 	                )
 	            )
 	        );
@@ -1776,13 +1914,19 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = moment;
 
 /***/ },
-/* 31 */
+/* 32 */
+/***/ function(module, exports) {
+
+	module.exports = EventEmitter;
+
+/***/ },
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1790,8 +1934,8 @@
 	var React = __webpack_require__(1);
 	var Router = __webpack_require__(2);
 
-	var Sidebar = __webpack_require__(25);
-	var SidebarJSON = __webpack_require__(32);
+	var Sidebar = __webpack_require__(26);
+	var SidebarJSON = __webpack_require__(34);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -1802,7 +1946,7 @@
 	});
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -1815,7 +1959,7 @@
 	]
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1829,11 +1973,12 @@
 	var Validator = __webpack_require__(8);
 	var Constants = __webpack_require__(9);
 	var Utils = __webpack_require__(19);
+	var ui = __webpack_require__(20);
 
-	var LabelInput = __webpack_require__(23);
-	var LabelTextarea = __webpack_require__(34);
-	var Sidebar = __webpack_require__(31);
-	var Upload = __webpack_require__(27);
+	var LabelInput = __webpack_require__(24);
+	var LabelTextarea = __webpack_require__(36);
+	var Sidebar = __webpack_require__(33);
+	var Upload = __webpack_require__(28);
 
 	var Image = React.createClass({
 	    displayName: 'Image',
@@ -1887,6 +2032,8 @@
 	        };
 	    },
 	    handleSubmit: function handleSubmit(e, model) {
+	        var store = this.props.data;
+
 	        e.preventDefault();
 	        this.setState({ isSubmitting: true });
 
@@ -1894,9 +2041,26 @@
 	            _.extend(model, { image: this.state.image._id });
 	        }
 
+	        if (store && store._id) {
+
+	            backend.post.manageStoreUpdate(_.extend({ _id: store._id }, model)).then((function (response) {
+	                if (response.code === Constants.resCode.COMMON) {
+	                    ui.tip('修改成功！', (function () {
+	                        this.transitionTo('manage-store');
+	                    }).bind(this));
+	                } else {
+	                    this.setState({ errors: response.errors, isSubmitting: false });
+	                }
+	            }).bind(this));
+
+	            return;
+	        }
+
 	        backend.post.manageStoreNew(model).then((function (response) {
 	            if (response.code === Constants.resCode.COMMON) {
-	                this.transitionTo('manage-store');
+	                ui.tip('新增成功！', (function () {
+	                    this.transitionTo('manage-store');
+	                }).bind(this));
 	            } else {
 	                this.setState({ errors: response.errors, isSubmitting: false });
 	            }
@@ -1954,7 +2118,7 @@
 	                        React.createElement(
 	                            'div',
 	                            { className: 'col-sm-10' },
-	                            this.state.image ? React.createElement(Image, { handleDelete: this.handleDeleteImg, image: this.state.image }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess, config: this.props.config })
+	                            this.state.image ? React.createElement(Image, { handleDeleteImg: this.handleDeleteImg, image: this.state.image }) : React.createElement(Upload, { uploadSuccess: this.uploadSuccess, config: this.props.config })
 	                        )
 	                    ),
 	                    React.createElement(LabelInput, { name: 'name',
@@ -2045,7 +2209,7 @@
 	});
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

@@ -7,6 +7,8 @@ var backend = require('../../../component/backend');
 var Validator = require('../../../component/react-validator');
 var Constants = require('../../../../lib/utils/constants');
 var Utils = require('../../../component/utils');
+var ui = require('../../../component/ui');
+
 
 var LabelInput = require('../../common/label-input.jsx');
 var LabelTextarea = require('../../common/label-textarea.jsx');
@@ -57,6 +59,9 @@ module.exports = React.createClass({
         };
     },
     handleSubmit: function (e, model) {
+        var store = this.props.data;
+
+
         e.preventDefault();
         this.setState({isSubmitting: true});
 
@@ -64,13 +69,34 @@ module.exports = React.createClass({
             _.extend(model, {image: this.state.image._id});
         }
 
+
+        if (store && store._id) {
+
+            backend.post.manageStoreUpdate(_.extend({_id: store._id}, model)).then(function (response) {
+                if (response.code === Constants.resCode.COMMON) {
+                    ui.tip('修改成功！', function () {
+                        this.transitionTo('manage-store');
+                    }.bind(this));
+                } else {
+                    this.setState({errors: response.errors, isSubmitting: false});
+                }
+            }.bind(this));
+
+            return;
+        }
+
+
         backend.post.manageStoreNew(model).then(function (response) {
             if (response.code === Constants.resCode.COMMON) {
-                this.transitionTo('manage-store');
+                ui.tip('新增成功！', function () {
+                    this.transitionTo('manage-store');
+                }.bind(this));
             } else {
                 this.setState({errors: response.errors, isSubmitting: false});
             }
         }.bind(this));
+
+
     },
     handleDeleteImg: function () {
         this.setState({image: null});
@@ -103,7 +129,7 @@ module.exports = React.createClass({
                             <div className="col-sm-10">
 
                                 {this.state.image ?
-                                    <Image handleDelete={this.handleDeleteImg} image={this.state.image}/> :
+                                    <Image handleDeleteImg={this.handleDeleteImg} image={this.state.image}/> :
                                     <Upload uploadSuccess={this.uploadSuccess} config={this.props.config}/>}
                             </div>
                         </div>
